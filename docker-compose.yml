@@ -21,6 +21,16 @@ services:
     deploy:
       replicas: 2
 
+  heimdall:
+    image: linuxserver/heimdall
+    ports:
+      - "3080:80"
+      - "3443:443"
+
+  #################
+  ##  Databases  ##
+  #################
+
   mysql-minecraft-db:
     image: mysql
     volumes:
@@ -32,6 +42,7 @@ services:
         MYSQL_PASSWORD: ankdl;fg's;fl][xzvc[bipo[jwm;'epsa]fujiv,./swmedi[opusdf0ik43570-91[,lkk'ADFcld]gktwu34923'
     ports:
       - "3306:3306"
+
   mysql-admin:
     image: phpmyadmin/phpmyadmin
     environment:
@@ -42,7 +53,7 @@ services:
   mysql-helix-db:
     image: mysql
     volumes:
-      - mysql-db:/var/lib/mysql
+      - mysql-db1:/var/lib/mysql
     environment:
         MYSQL_ROOT_PASSWORD: kjhsdapgjmw4l;5n mtrupi7usdfoaisyu7g9834875'7y;'[;]o,h[]p;!#$@&*%^$&TGVKD%RS&^TGYI*&$%(yhhsydfa
         MYSQL_DATABASE: helix
@@ -51,12 +62,12 @@ services:
     ports:
       - "3307:3306"
 
-
-  heimdall:
-    image: linuxserver/heimdall
+  mysql-admin2:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql-db
     ports:
-      - "3080:80"
-      - "3443:443"
+      - "8081:80"
 
 
   ################
@@ -89,4 +100,11 @@ volumes:
     driver_opts:
       type: none
       device: /home/sinless777/services/mysql-db
+      o: bind
+
+  mysql-db1:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/mysql-db1
       o: bind
