@@ -1,0 +1,66 @@
+version: "3.7"
+services:
+  ##########################################
+  ##  Network Load Balancer for Services  ##
+  ##########################################
+  network-lb:
+    image: sinless777/network-lb:1.35
+    ports:
+      - 443:443
+    depends_on:
+      - jenkins
+
+  ####################
+  ##  DevOps Stack  ##
+  ####################
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    volumes:
+      - jenkins:/var/jenkins_home
+    deploy:
+      replicas: 2
+
+  mysql-db:
+    image: mysql
+    volumes:
+      - mysql-db:/var/lib/mysql
+
+  heimdall:
+    image: linuxserver/heimdall
+    ports:
+      - 3080:80
+      - 3443:443
+
+
+  ################
+  ##  Websites  ##
+  ################
+
+  sinlessgames:
+    image: sinless777/gateway:1.1.3
+    deploy:
+      replicas: 6
+
+  mobius:
+    image: sinless777/mobius_gateway:0.2.16
+    deploy:
+      replicas: 6
+
+###############
+##  Volumes  ##
+###############
+volumes:
+  jenkins:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/jenkins
+      o: bind
+
+  mysql-db:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/mysql-db
+      o: bind
