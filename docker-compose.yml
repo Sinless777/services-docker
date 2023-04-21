@@ -39,8 +39,6 @@ services:
     image: jenkins/jenkins:lts
     volumes:
       - jenkins:/var/jenkins_home
-    deploy:
-      replicas: 2
 
   heimdall:
     image: linuxserver/heimdall
