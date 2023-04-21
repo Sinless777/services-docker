@@ -16,6 +16,7 @@ services:
 
   unifi:
     image: linuxserver/unifi-controller
+    restart: always
     environment:
       - PUID=1000
       - PGID=1000
