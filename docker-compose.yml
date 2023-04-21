@@ -39,6 +39,9 @@ services:
     image: jenkins/jenkins:lts
     volumes:
       - jenkins:/var/jenkins_home
+    ports:
+        - "8080:8080"
+        - "50000:50000"
 
   heimdall:
     image: linuxserver/heimdall
