@@ -6,9 +6,34 @@ services:
   network-lb:
     image: sinless777/network-lb:1.35
     ports:
-      - 443:443
+      - "443:443"
     depends_on:
       - jenkins
+
+  ##########################
+  ##  Network Controller  ##
+  ##########################
+
+  unifi:
+    image: linuxserver/unifi-controller
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - MEM_LIMIT=4096 #optional
+      - MEM_STARTUP=1024 #optional
+    volumes:
+        - unifi:/config
+    ports:
+      - "8443:8443"
+      - "3478:3478/udp"
+      - "10001:10001/udp"
+      - "8080:8080"
+      - "1900:1900/udp" #optional
+      - "8843:8843" #optional
+      - "8880:8880" #optional
+      - "6789:6789" #optional
+      - "5514:5514/udp" #optional
 
   ####################
   ##  DevOps Stack  ##
@@ -26,6 +51,8 @@ services:
     ports:
       - "3080:80"
       - "3443:443"
+    volumes:
+        - heimdall:/config
 
   #################
   ##  Databases  ##
@@ -107,4 +134,18 @@ volumes:
     driver_opts:
       type: none
       device: /home/sinless777/services/mysql-db1
+      o: bind
+
+  unifi:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/unifi
+      o: bind
+
+  heimdall:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/heimdall
       o: bind
