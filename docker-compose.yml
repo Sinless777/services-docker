@@ -45,6 +45,18 @@ services:
     ports:
       - "50000:50000"
 
+  nagios:
+    image: jasonrivers/nagios:latest
+    volumes:
+      - nagiosetc:/opt/nagios/etc
+      - nagiosvar:/opt/nagios/var
+      - customplugins:/opt/Custom-Nagios-Plugins
+      - nagiosgraphvar:/opt/nagiosgraph/var
+      - nagiosgraphetc:/opt/nagiosgraph/etc
+    ports:
+        - "8081:80"
+        - "5666:5666"
+
   heimdall:
     image: linuxserver/heimdall
     ports:
@@ -91,7 +103,7 @@ services:
       replicas: 6
 
   mobius:
-    image: sinless777/mobius_gateway:0.2.18_build.10
+    image: sinless777/mobius_gateway
     deploy:
       replicas: 6
 
@@ -132,4 +144,39 @@ volumes:
     driver_opts:
       type: none
       device: /home/sinless777/services/heimdall
+      o: bind
+
+  nagiosetc:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/nagios/etc
+      o: bind
+
+  nagiosvar:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/nagios/var
+      o: bind
+
+  customplugins:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/nagios/customplugins
+      o: bind
+
+  nagiosgraphvar:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/nagiosgraph/var
+      o: bind
+
+  nagiosgraphetc:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/nagiosgraph/etc
       o: bind
