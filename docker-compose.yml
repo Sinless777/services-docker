@@ -91,7 +91,7 @@ services:
       replicas: 6
 
   mobius:
-    image: sinless777/mobius_gateway:0.2.16
+    image: sinless777/mobius_gateway:0.2.18_build.10
     deploy:
       replicas: 6
 
