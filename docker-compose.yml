@@ -39,7 +39,7 @@ services:
   ####################
 
   jenkins:
-    image: jenkins/jenkins:lts
+    image: jenkins/jenkins
     volumes:
       - jenkins:/var/jenkins_home
     ports:
