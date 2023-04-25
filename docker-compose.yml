@@ -4,7 +4,7 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-    image: sinless777/network-lb:1.35
+    image: sinless777/network-lb:2.0
     ports:
       - "443:443"
     depends_on:
@@ -39,8 +39,7 @@ services:
   ####################
 
   jenkins:
-    image: jenkins/jenkins:lts
-    privileged: true
+    image: jenkins/jenkins
     volumes:
       - jenkins:/var/jenkins_home
     ports:
@@ -48,26 +47,6 @@ services:
     depends_on:
       - sonarqube
 
-  grafana:
-    image: grafana/grafana
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    volumes:
-        - ./grafana:/var/lib/grafana
-        - ./grafana/provisioning:/etc/grafana/provisioning
-        - ./grafana/dashboards:/var/lib/grafana/dashboards
-        - ./grafana/datasources:/var/lib/grafana/datasources
-        - ./grafana/plugins:/var/lib/grafana/plugins
-    depends_on:
-        - prometheus
-
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
 
 
@@ -85,6 +64,19 @@ services:
       - "3443:443"
     volumes:
         - heimdall:/config
+
+  #######################
+  ##  Message Brokers  ##
+  #######################
+
+  redis:
+      image: redis:6.2-alpine
+      restart: always
+      ports:
+        - '6379:6379'
+      command: redis-server --save 20 1 --loglevel warning --requirepass lhfuiuvfw?E:dsjhgfkulherlktyuilgulc;xvnblxidrujhtgl;/erhtpbgjfdg.lknb xdk.rki
+      volumes:
+        - redis:/data
 
   #################
   ##  Databases  ##
@@ -128,6 +120,13 @@ services:
     deploy:
       replicas: 6
 
+  minecraft:
+    image: sinless777/mobius-infernium:1.0.0
+    deploy:
+      replicas: 2
+    volumes:
+      - minecraft:./
+
 ###############
 ##  Volumes  ##
 ###############
@@ -166,3 +165,18 @@ volumes:
       type: none
       device: /home/sinless777/services/heimdall
       o: bind
+
+  minecraft:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/minecraft
+      o: bind
+
+  redis:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/cache/redis
+      o: bind
+
