@@ -123,6 +123,7 @@ services:
     ports:
       - "25565:25565"
       - "8804:8804"
+      - "5672:5672"
     volumes:
       - minecraft:/data
 
