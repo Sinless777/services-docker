@@ -44,17 +44,6 @@ services:
       - jenkins:/var/jenkins_home
     ports:
       - "50000:50000"
-    depends_on:
-      - sonarqube
-
-
-
-
-  sonarqube:
-    image: sonarqube
-    ports:
-      - "9000:9000"
-      - "9092:9092"
 
   heimdall:
     image: linuxserver/heimdall
