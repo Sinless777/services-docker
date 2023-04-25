@@ -51,8 +51,7 @@ services:
 
 
   sonarqube:
-    build:
-      context: sonarqube/
+    image: sonarqube
     ports:
       - "9000:9000"
       - "9092:9092"
