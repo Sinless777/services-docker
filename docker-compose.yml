@@ -12,6 +12,7 @@ services:
       - mobius
       - sinlessgames
       - heimdall
+      - minecraft
 
   ##########################
   ##  Network Controller  ##
