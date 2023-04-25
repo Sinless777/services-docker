@@ -110,11 +110,18 @@ services:
       replicas: 6
 
   minecraft:
-    image: sinless777/mobius-infernium:1.0.1
+    image: itzg/minecraft-server
+    environment:
+      EULA: "TRUE"
+      TYPE: "MAGMA"
+      TZ: "America/Denver"
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
     deploy:
       replicas: 2
     volumes:
-      - minecraft:/MIServer
+      - minecraft:/data
 
 ###############
 ##  Volumes  ##
