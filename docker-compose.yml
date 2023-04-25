@@ -79,7 +79,7 @@ services:
         MYSQL_ROOT_PASSWORD: klhjflksdlkjsdifuivkwk;lj5u04o23-0588r203082-7rwe52joisdvyxzd9to,3o4ug509e89,ky
         MYSQL_DATABASE: minecraft
         MYSQL_USER: minecraft
-        MYSQL_PASSWORD: ankdl;fg's;fl][xzvc[bipo[jwm;'epsa]fujiv,./swmedi[opusdf0ik43570-91[,lkk'ADFcld]gktwu34923'
+        MYSQL_PASSWORD: ankdl;fgs;fl][xzvc[bipo[jwm;'epsa]fujiv,./swmedi[opusdf0ik43570-91[,lkk'ADFcld]gktwu34923
     ports:
       - "3306:3306"
 
@@ -121,6 +121,7 @@ services:
     restart: unless-stopped
     ports:
       - "25565:25565"
+      - "8804:8804"
     volumes:
       - minecraft:/data
 
