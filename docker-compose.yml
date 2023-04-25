@@ -113,7 +113,7 @@ services:
     deploy:
       replicas: 2
     volumes:
-      - minecraft:./
+      - minecraft:/MIServer
 
 ###############
 ##  Volumes  ##
