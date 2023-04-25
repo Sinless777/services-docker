@@ -115,6 +115,7 @@ services:
       EULA: "TRUE"
       TYPE: "MAGMA"
       TZ: "America/Denver"
+      VERSION: "1.18.2"
     tty: true
     stdin_open: true
     restart: unless-stopped
