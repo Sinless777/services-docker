@@ -116,6 +116,7 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: "MAGMA"
+      VERSION: "1.18.2"
     tty: true
     stdin_open: true
     restart: unless-stopped
