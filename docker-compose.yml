@@ -109,7 +109,7 @@ services:
       replicas: 6
 
   minecraft:
-    image: sinless777/mobius-infernium:1.0.0
+    image: sinless777/mobius-infernium:1.0.1
     deploy:
       replicas: 2
     volumes:
