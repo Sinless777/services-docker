@@ -110,19 +110,11 @@ services:
       replicas: 6
 
   minecraft:
-    image: itzg/minecraft-server
+    image: sinless777/mobius-infernium:1.0.1
     deploy:
       replicas: 2
-    environment:
-      EULA: "TRUE"
-      TYPE: "MAGMA"
-      VERSION: "1.18.2"
-    tty: true
-    stdin_open: true
-    restart: unless-stopped
     volumes:
-      # attach a directory relative to the directory containing this compose file
-      - minecraft:/data
+      - minecraft:/MIServer
 
 ###############
 ##  Volumes  ##
