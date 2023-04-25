@@ -4,7 +4,7 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-    image: sinless777/network-lb:2.1
+    image: sinless777/network-lb:2.0
     ports:
       - "443:443"
     depends_on:
@@ -59,13 +59,14 @@ services:
   #######################
 
   redis:
-      image: redis:6.2-alpine
-      restart: always
-      ports:
-        - '6379:6379'
-      command: redis-server --save 20 1 --loglevel warning --requirepass lhfuiuvfw?E:dsjhgfkulherlktyuilgulc;xvnblxidrujhtgl;/erhtpbgjfdg.lknb xdk.rki
-      volumes:
-        - redis:/data
+    image: 'bitnami/redis:latest'
+    restart: always
+    ports:
+      - '6379:6379'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redis:/data
 
   #################
   ##  Databases  ##
