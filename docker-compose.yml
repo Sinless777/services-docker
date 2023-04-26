@@ -132,7 +132,7 @@ services:
       - minecraft:/data
 
   banmanager:
-    image: sinless777/banmanager:1.0.0
+    image: sinless777/ban-manager:1.0.0
     depends_on:
       - minecraft
     deploy:
