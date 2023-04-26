@@ -137,6 +137,8 @@ services:
       - minecraft
     deploy:
       replicas: 1
+    volumes:
+      - /home/sinless777/services/banmanager:/app
 
 ###############
 ##  Volumes  ##
