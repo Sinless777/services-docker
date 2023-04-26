@@ -4,7 +4,7 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-    image: sinless777/network-lb:2.0
+    image: sinless777/network-lb:2.2
     ports:
       - "443:443"
     depends_on:
@@ -110,6 +110,10 @@ services:
     deploy:
       replicas: 6
 
+  #################
+  ##  Minecraft  ##
+  #################
+
   minecraft:
     image: itzg/minecraft-server
     environment:
@@ -126,6 +130,13 @@ services:
       - "5672:5672"
     volumes:
       - minecraft:/data
+
+  banmanager:
+    image: sinless777/banmanager:1.0.0
+    depends_on:
+      - minecraft
+    deploy:
+      replicas: 1
 
 ###############
 ##  Volumes  ##
