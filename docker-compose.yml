@@ -148,6 +148,9 @@ services:
       - DB_USER=Admin
       - DB_PASSWORD=Shellshocker93
       - DB_NAME=Minecraft_Ban_Manager
+      - ENABLE_AUTOPAUSE=TRUE
+      - INIT_MEMORY=40G
+      - MAX_MEMORY=10G
     deploy:
       replicas: 1
 
