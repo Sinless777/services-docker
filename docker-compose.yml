@@ -118,9 +118,11 @@ services:
     image: itzg/minecraft-server
     environment:
       EULA: "TRUE"
-      TYPE: "MAGMA"
+      TYPE: "MOHIST"
       TZ: "America/Denver"
       VERSION: "1.18.2"
+      MEMORY: "10G"
+
     tty: true
     stdin_open: true
     restart: unless-stopped
@@ -148,11 +150,8 @@ services:
       - DB_USER=Admin
       - DB_PASSWORD=Shellshocker93
       - DB_NAME=Minecraft_Ban_Manager
-      - ENABLE_AUTOPAUSE=TRUE
-      - INIT_MEMORY=40G
-      - MAX_MEMORY=10G
     deploy:
-      replicas: 1
+      replicas: 4
 
 ###############
 ##  Volumes  ##
