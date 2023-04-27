@@ -4,7 +4,7 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-    image: sinless777/network-lb:2.2
+    image: sinless777/network-lb:2.0
     ports:
       - "443:443"
     depends_on:
@@ -134,7 +134,7 @@ services:
       - minecraft:/data
 
   banmanager:
-    image: sinless777/ban-manager:1.0.0
+    image: sinless777/ban-manager:latest
     depends_on:
       - minecraft
     environment:
