@@ -4,7 +4,7 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-    image: sinless777/network-lb:2.9.10_build.16
+    image: sinless777/network-lb:latest
     ports:
       - "443:443"
     depends_on:
