@@ -118,7 +118,7 @@ services:
     image: itzg/minecraft-server
     environment:
       EULA: "TRUE"
-      TYPE: "MAGMA"
+      TYPE: "MOHIST"
       TZ: "America/Denver"
       VERSION: "1.18.2"
       MEMORY: "10G"
