@@ -122,6 +122,7 @@ services:
       TZ: "America/Denver"
       VERSION: "1.18.2"
       MEMORY: "10G"
+      RCON_PASSWORD: "Shellshocker93"
 
     tty: true
     stdin_open: true
@@ -152,6 +153,18 @@ services:
       - DB_NAME=Minecraft_Ban_Manager
     deploy:
       replicas: 4
+
+  rconwebadmin:
+    image: "itzg/rcon"
+    environment:
+      - RWA_PASSWORD=Shellshocker93
+      - RWA_RCON_HOST=minecraft
+    depends_on:
+      - minecraft
+    ports:
+      - "4326:4326"
+      - "4327:4327"
+
 
 ###############
 ##  Volumes  ##
