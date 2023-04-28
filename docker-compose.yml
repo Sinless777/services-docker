@@ -123,6 +123,7 @@ services:
       VERSION: "1.18.2"
       MEMORY: "10G"
       RCON_PASSWORD: "Shellshocker93"
+      ENABLE_RCON: "true"
 
     tty: true
     stdin_open: true
@@ -157,8 +158,11 @@ services:
   rconwebadmin:
     image: "itzg/rcon"
     environment:
-      - RWA_PASSWORD=Shellshocker93
-      - RWA_RCON_HOST=minecraft
+      RWA_PASSWORD: "Shellshocker93"
+      RWA_RCON_HOST: minecraft
+      RWA_USERNAME: Sinless777
+      RWA_ADMIN: "TRUE"
+      RWA_RCON_PASSWORD: "Shellshocker93"
     depends_on:
       - minecraft
     ports:
