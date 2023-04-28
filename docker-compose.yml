@@ -4,7 +4,7 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-    image: sinless777/network-lb:2.4
+    image: sinless777/network-lb:2.5
     ports:
       - "443:443"
     depends_on:
@@ -44,6 +44,7 @@ services:
     volumes:
       - jenkins:/var/jenkins_home
     ports:
+      - "8090:8080"
       - "50000:50000"
 
   heimdall:
