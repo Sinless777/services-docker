@@ -47,6 +47,10 @@ services:
 
   heimdall:
     image: linuxserver/heimdall
+    privileged: true
+    ports:
+      - "3343:443"
+      - "3081:80"
     volumes:
         - heimdall:/config
 
@@ -55,7 +59,7 @@ services:
   #######################
 
   redis:
-    image: 'bitnami/redis:latest'
+    image: redis
     restart: always
     ports:
       - '6379:6379'
