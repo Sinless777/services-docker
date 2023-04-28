@@ -25,6 +25,18 @@ services:
     volumes:
       - /home/sinless777/services/nginx:/data
       - /home/sinless777/services/nginx/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+      - jenkins
+      - heimdall
+      - sinlessgames
+      - mobius
+      - minecraft
+      - banmanager
+      - unifi
+      - redis
+      - mysql-minecraft-db
+      - mysql-helix-db
 
   ##########################
   ##  Network Controller  ##
