@@ -4,7 +4,7 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-    image: sinless777/network-lb:latest
+    image: sinless777/network-lb:2.9.10_build.16
     ports:
       - "443:443"
     depends_on:
@@ -49,7 +49,7 @@ services:
     image: linuxserver/heimdall
     privileged: true
     ports:
-      - "3343:443"
+      - "3443:443"
       - "3081:80"
     volumes:
         - heimdall:/config
