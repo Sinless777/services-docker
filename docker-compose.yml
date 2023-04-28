@@ -47,9 +47,6 @@ services:
 
   heimdall:
     image: linuxserver/heimdall
-    ports:
-      - "3080:80"
-      - "3443:443"
     volumes:
         - heimdall:/config
 
