@@ -106,7 +106,9 @@ services:
       replicas: 6
 
   mobius:
-    image: sinless777/mobius_gateway:0.4.0_build.13.bugfix.Dockerfile_repair
+    image: sinless777/mobius_gateway:latest
+    ports:
+      - "3306:3306"
     deploy:
       replicas: 6
 
