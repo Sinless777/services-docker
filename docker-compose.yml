@@ -106,7 +106,7 @@ services:
       replicas: 6
 
   mobius:
-    image: sinless777/mobius_gateway
+    image: sinless777/mobius_gateway:latest
     deploy:
       replicas: 6
 
