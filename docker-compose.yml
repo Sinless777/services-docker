@@ -79,8 +79,6 @@ services:
 
   mobius:
     image: sinless777/mobius_gateway:latest
-    ports:
-      - "3306:3306"
     deploy:
       replicas: 6
 
