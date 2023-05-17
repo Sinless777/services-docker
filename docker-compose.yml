@@ -68,34 +68,6 @@ services:
     volumes:
       - redis:/data
 
-  #################
-  ##  Databases  ##
-  #################
-
-  mysql-minecraft-db:
-    image: mysql
-    volumes:
-      - mysql-db:/var/lib/mysql
-    environment:
-        MYSQL_ROOT_PASSWORD: klhjflksdlkjsdifuivkwk;lj5u04o23-0588r203082-7rwe52joisdvyxzd9to,3o4ug509e89,ky
-        MYSQL_DATABASE: minecraft
-        MYSQL_USER: minecraft
-        MYSQL_PASSWORD: ankdl;fgs;fl][xzvc[bipo[jwm;'epsa]fujiv,./swmedi[opusdf0ik43570-91[,lkk'ADFcld]gktwu34923
-    ports:
-      - "3306:3306"
-
-  mysql-helix-db:
-    image: mysql
-    volumes:
-      - mysql-db1:/var/lib/mysql
-    environment:
-        MYSQL_ROOT_PASSWORD: kjhsdapgjmw4l;5n mtrupi7usdfoaisyu7g9834875'7y;'[;]o,h[]p;!#$@&*%^$&TGVKD%RS&^TGYI*&$%(yhhsydfa
-        MYSQL_DATABASE: helix
-        MYSQL_USER: helix
-        MYSQL_PASSWORD: kgdfoysyfhwi45u0-270y7970865&^$%@%$#^%Tiubhsgdfkhat7youGFI&^tUHbg8765tghfbuywo3j4uj[;l
-    ports:
-      - "3307:3306"
-
   ################
   ##  Websites  ##
   ################
