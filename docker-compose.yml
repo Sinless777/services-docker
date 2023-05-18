@@ -93,7 +93,6 @@ services:
       TYPE: "MAGMA"
       TZ: "America/Denver"
       VERSION: "1.18.2"
-      MEMORY: "10G"
       RCON_PASSWORD: "Shellshocker93"
       ENABLE_RCON: "true"
 
