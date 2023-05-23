@@ -166,20 +166,6 @@ volumes:
       device: /home/sinless777/services/jenkins
       o: bind
 
-  mysql-db:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/mysql-db
-      o: bind
-
-  mysql-db1:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/mysql-db1
-      o: bind
-
   unifi:
     driver: local
     driver_opts:
@@ -205,7 +191,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/sinless777/services/cache/redis
+      device: /home/sinless777/services/redis
       o: bind
 
   mobius:
