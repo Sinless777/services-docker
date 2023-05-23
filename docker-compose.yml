@@ -145,14 +145,22 @@ services:
       - "4327:4327"
 
   pydio:
-    image: pydio/cells:latest
-    restart: always
+    image: lscr.io/linuxserver/pydio-cells:latest
+    container_name: pydio-cells
+    hostname: pydio-cells
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - EXTERNALURL=mfiles.mobiusinferniummc.com
+      - SERVER_IP=192.168.86.140 #optional
     volumes:
       - pydio:/config
       - minecraft:/data/minecraft
       - mobius:/data/mobius
     ports:
       - "8080:8080"
+      - "3306:3306"
 
 
 ###############
