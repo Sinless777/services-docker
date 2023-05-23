@@ -145,7 +145,6 @@ services:
 
   pydio:
     image: ghcr.io/linuxserver/pydio
-    container_name: minecraft_pydio
     environment:
       - PUID=1000
       - PGID=1000
