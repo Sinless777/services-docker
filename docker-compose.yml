@@ -152,18 +152,8 @@ services:
       - TZ=America/Denver
     volumes:
       - pydio:/config
-      - minecraft:/data
-
-  pydio1:
-    image: ghcr.io/linuxserver/pydio
-    container_name: mobius_pydio
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Denver
-    volumes:
-      - pydio:/config
-      - mobius:/data
+      - minecraft:/data/minecraft
+      - mobius:/data/mobius
 
 
 ###############
