@@ -144,6 +144,16 @@ services:
       - "4326:4326"
       - "4327:4327"
 
+  sftp-server1:
+    container_name: sftp-server1
+    image: atmoz/sftp:alpine
+    ports:
+      - "1022:22"
+    volumes:
+      - minecraft:/home/sinless777/services/minecraft
+      - mobius:/home/sinless777/services/mobius
+    restart: on-failure
+    command: onap:pano:1001
 
 ###############
 ##  Volumes  ##
