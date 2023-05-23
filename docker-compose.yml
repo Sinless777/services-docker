@@ -159,7 +159,7 @@ services:
       - minecraft:/data/minecraft
       - mobius:/data/mobius
     ports:
-      - "8080:8080"
+      - "8090:8080"
       - "3306:3306"
 
 
