@@ -198,13 +198,6 @@ volumes:
       device: /home/sinless777/services/cache/redis
       o: bind
 
-  pydio:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/pydio
-      o: bind
-
   mobius:
     driver: local
     driver_opts:
