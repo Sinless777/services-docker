@@ -155,6 +155,7 @@ services:
       - mobius:/home/sinless777/services/mobius
     restart: on-failure
     command: sinless777:Shells93:1000
+    command: rushedit:Rushil099Inf:1001
 
 ###############
 ##  Volumes  ##
