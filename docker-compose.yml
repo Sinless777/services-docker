@@ -154,8 +154,7 @@ services:
       - minecraft:/home/sinless777/services/minecraft
       - mobius:/home/sinless777/services/mobius
     restart: on-failure
-    command: sinless777:Shells93:1000
-    command: rushedit:Rushil099Inf:1001
+    command: sinless777:Shells93:1000 && rushedit:Rushil099Inf:1001
 
 ###############
 ##  Volumes  ##
