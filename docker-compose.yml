@@ -3,16 +3,22 @@ services:
   ##########################################
   ##  Network Load Balancer for Services  ##
   ##########################################
-  network-lb:
+    network-lb:
     image: sinless777/network-lb:latest
+    restart: always
     ports:
       - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
     depends_on:
       - jenkins
       - mobius
       - sinlessgames
       - heimdall
       - minecraft
+      - unifi
+      - rconwebadmin
+      - banmanager
 
   ##########################
   ##  Network Controller  ##
