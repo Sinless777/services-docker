@@ -23,7 +23,6 @@ services:
   ##########################
   ##  Network Controller  ##
   ##########################
-
   unifi:
     image: linuxserver/unifi-controller
     restart: always
