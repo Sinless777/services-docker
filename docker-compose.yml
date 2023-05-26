@@ -131,7 +131,7 @@ services:
       replicas: 4
 
   rconwebadmin:
-    image: pydio/cells:latest
+    image: itzg/rcon
     restart: unless-stopped
     environment:
       RWA_PASSWORD: "Shellshocker93"
