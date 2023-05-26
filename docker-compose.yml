@@ -3,7 +3,7 @@ services:
   ##########################################
   ##  Network Load Balancer for Services  ##
   ##########################################
-    network-lb:
+  network-lb:
       image: sinless777/network-lb:latest
       restart: always
       ports:
