@@ -98,8 +98,6 @@ services:
 
   banmanager:
     image: sinless777/ban-manager:latest
-    depends_on:
-      - minecraft
     environment:
       - SERVER_FOOTER_NAME=MobiusInfernium
       - NODE_ENV=production
