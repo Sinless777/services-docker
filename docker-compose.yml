@@ -123,8 +123,6 @@ services:
       RWA_USERNAME: Sinless777
       RWA_ADMIN: "TRUE"
       RWA_RCON_PASSWORD: "Shellshocker93"
-    depends_on:
-      - minecraft
     ports:
       - "4326:4326"
       - "4327:4327"
