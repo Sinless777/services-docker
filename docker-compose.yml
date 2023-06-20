@@ -16,8 +16,6 @@ services:
         - sinlessgames
         - heimdall
         - unifi
-        - rconwebadmin
-        - banmanager
 
   ##########################
   ##  Network Controller  ##
