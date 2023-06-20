@@ -60,20 +60,6 @@ services:
     volumes:
         - heimdall:/config
 
-  #######################
-  ##  Message Brokers  ##
-  #######################
-
-  redis:
-    image: redis
-    restart: always
-    command: redis-server --loglevel warning
-    ports:
-      - '6379:6379'
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    volumes:
-      - redis:/data
 
   ################
   ##  Websites  ##
@@ -94,50 +80,6 @@ services:
     image: sinless777/mobius_gateway:latest
     deploy:
       replicas: 2
-
-  banmanager:
-    image: sinless777/ban-manager:latest
-    environment:
-      - SERVER_FOOTER_NAME=MobiusInfernium
-      - NODE_ENV=production
-      - CONTACT_EMAIL=disdainful777@gmail.com
-      - ENCRYPTION_KEY=3ea43869c9f887c1d6f0faa7d5af94856d6f1ad17bc739992c5ec5d408f7c68d
-      - SESSION_KEY=2acd18005741083fae1fbfbc3de0c60cc8b2049ebb635ffa2933924796986b2c
-      - NOTIFICATION_VAPID_PUBLIC_KEY=BO5rcaNwruP03QedGp7uRCrWuUVDs72YsmGjmOsKr5e8Apf87xyw5lEDaweATJOA3oqeH-Xv7FqieUvTiB7NZA8
-      - NOTIFICATION_VAPID_PRIVATE_KEY=WbrJftww3b8_RB6hiU-oof-06yoQj9ymvd-PUg4L6hE
-      - DB_HOST=192.168.86.40
-      - DB_PORT=3306
-      - DB_USER=Admin
-      - DB_PASSWORD=Shellshocker93
-      - DB_NAME=Minecraft_Ban_Manager
-    deploy:
-      replicas: 1
-
-  rconwebadmin:
-    image: itzg/rcon
-    restart: unless-stopped
-    environment:
-      RWA_PASSWORD: "Shellshocker93"
-      RWA_RCON_HOST: minecraft
-      RWA_USERNAME: Sinless777
-      RWA_ADMIN: "TRUE"
-      RWA_RCON_PASSWORD: "Shellshocker93"
-    ports:
-      - "4326:4326"
-      - "4327:4327"
-
-  sftp-server1:
-    container_name: sftp-server1
-    image: atmoz/sftp:alpine
-    ports:
-      - "1022:22"
-    volumes:
-      - minecraft:/home/sinless777/services/minecraft
-      - mobius:/home/sinless777/services/mobius
-    restart: on-failure
-    command: 
-      - sinless777:Shells93:1000 
-      - rushedit:Rushil099Inf:1002
 
 ###############
 ##  Volumes  ##
@@ -162,20 +104,6 @@ volumes:
     driver_opts:
       type: none
       device: /home/sinless777/services/heimdall
-      o: bind
-
-  minecraft:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/minecraft
-      o: bind
-
-  redis:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/redis
       o: bind
 
   mobius:
