@@ -38,6 +38,7 @@ services:
       - "3478:3478/udp"
       - "10001:10001/udp"
       - "8080:8080"
+      - "8443:8443"
 
   ####################
   ##  DevOps Stack  ##
@@ -59,20 +60,6 @@ services:
     volumes:
         - heimdall:/config
 
-  #######################
-  ##  Message Brokers  ##
-  #######################
-
-  redis:
-    image: redis
-    restart: always
-    command: redis-server --loglevel warning
-    ports:
-      - '6379:6379'
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    volumes:
-      - redis:/data
 
   ################
   ##  Websites  ##
@@ -128,20 +115,6 @@ volumes:
     driver_opts:
       type: none
       device: /home/sinless777/services/heimdall
-      o: bind
-
-  minecraft:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/minecraft
-      o: bind
-
-  redis:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/redis
       o: bind
 
   mobius:
