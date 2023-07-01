@@ -4,25 +4,25 @@ services:
   ##  Network Load Balancer for Services  ##
   ##########################################
   network-lb:
-      image: sinless777/network_lb:latest
-      restart: always
-      ports:
-        - "443:443"
-      volumes:
-        - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      depends_on:
-        - jenkins
-        - mobius
-        - sinlessgames
-        - heimdall
-        - unifi
-        - iconiclastart
+    image: sinless777/network_lb:latest
+    restart: always
+    ports:
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    depends_on:
+      - jenkins
+      - mobius
+      - sinlessgames
+      - heimdall
+      - unifi
+      - iconiclastart
 
 
   ##########################
   ##  Network Controller  ##
   ##########################
-  
+
   unifi:
     image: linuxserver/unifi-controller
     restart: always
@@ -33,7 +33,7 @@ services:
       - MEM_LIMIT=4096 #optional
       - MEM_STARTUP=1024 #optional
     volumes:
-        - unifi:/config
+      - unifi:/config
     ports:
       - "3478:3478/udp"
       - "10001:10001/udp"
@@ -58,7 +58,7 @@ services:
       - "3443:443"
       - "3081:80"
     volumes:
-        - heimdall:/config
+      - heimdall:/config
 
 
   ################
@@ -79,7 +79,7 @@ services:
       WORDPRESS_DB_PASSWORD: Shellshocker93
       WORDPRESS_DB_NAME: Iconiclast-Art
     volumes:
-        - wordpress:/var/www/html
+      - wordpress:/var/www/html
 
   #################################
   ###                           ###
