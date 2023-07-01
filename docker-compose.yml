@@ -76,7 +76,7 @@ services:
     ports:
       - "8081:80"
     environment:
-      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_HOST: 192.168.86.40
       WORDPRESS_DB_USER: Admin
       WORDPRESS_DB_PASSWORD: Shellshocker93
       WORDPRESS_DB_NAME: Iconiclast-Art
