@@ -185,7 +185,7 @@ volumes:
       type: none
       device: /home/sinless777/services/iconiclast-art/mysql
       o: bind
-  mysql_data2:
+  mysql_data1:
     driver: local
     driver_opts:
       type: none
