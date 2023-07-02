@@ -73,8 +73,6 @@ services:
     image: jenkins/jenkins:lts
     volumes:
       - jenkins:/var/jenkins_home
-    ports:
-      - "50000:50000"
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     deploy:
