@@ -3,20 +3,41 @@ services:
   ##########################################
   ##  Network Load Balancer for Services  ##
   ##########################################
-  network-lb:
-    image: sinless777/network_lb:latest
-    restart: always
+  proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
     ports:
-      - "443:443"
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      - '21:21' # FTP
+    environment:
+      # Mysql/Maria connection parameters:
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
     volumes:
-      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
     depends_on:
-      - jenkins
-      - mobius
-      - sinlessgames
-      - heimdall
-      - unifi
-      - iconiclastart
+      - db
+
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - mysql_data1
 
 
   ##########################
@@ -163,5 +184,11 @@ volumes:
     driver_opts:
       type: none
       device: /home/sinless777/services/iconiclast-art/mysql
+      o: bind
+  mysql_data2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/mysql/nginx-proxy
       o: bind
 
