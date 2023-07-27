@@ -380,7 +380,7 @@ services:
   ###   VAULT   ###
 
   vault-server:
-    image: hashicorp/vault:1.8.1
+    image: hashicorp/vault:1.9.6
     container_name: vault-server
     hostname: vault-server
     restart: always
@@ -397,10 +397,29 @@ services:
     cap_add:
       - IPC_LOCK
     volumes:
-      - /home/sinless777/services/helix/vault/policy.json:/vault/policies/policy.json
+      - /home/sinless777/services/helix/vault/policies:/vault/policies
       - /home/sinless777/services/helix/vault/vault.hcl:/etc/vault.hcl
       - /home/sinless777/services/helix/vault/data:/mnt/vault/data
     command: "server -config=/etc/vault.hcl"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8200 || exit 1
+      interval: 10s
+      retries: 12
+      start_period: 10s
+      timeout: 10s
+
+  vdb:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Shellshocker93
+      MYSQL_DATABASE: vault
+      MYSQL_USER: vault
+      MYSQL_PASSWORD: vault
 
   ###   ELK-STACK   ###
 
@@ -416,7 +435,7 @@ services:
       - xpack.security.enabled=true
       - xpack.monitoring.collection.enabled=true
       - xpack.security.audit.enabled=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ulimits:
       memlock:
         soft: -1
@@ -455,27 +474,30 @@ services:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Shellshocker93!
+      - SERVER_NAME=kibana
     depends_on:
       - elasticsearch
 
   apm-server:
     image: docker.elastic.co/apm/apm-server:7.9.1
-    hostname: "{{.Node.Hostname}}-apm-server"
+    container_name: apm-server
+    hostname: apm-server
     command: >
       --strict.perms=false -e
       -E apm-server.rum.enabled=true
-      -E setup.kibana.host=kibana:5601
+      -E setup.kibana.host=http://kibana:5601
       -E setup.kibana.username=elastic
       -E setup.kibana.password=Shellshocker93!
       -E setup.template.settings.index.number_of_replicas=0
       -E apm-server.kibana.enabled=true
-      -E apm-server.kibana.host=kibana:5601
+      -E apm-server.kibana.host=http://kibana:5601
       -E apm-server.kibana.username=elastic
       -E apm-server.kibana.password=Shellshocker93!
-      -E output.elasticsearch.hosts=["elasticsearch:9200"]
+      -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
       -E output.elasticsearch.username=elastic
       -E output.elasticsearch.password=Shellshocker93!
       -E xpack.monitoring.enabled=true
+
 
 
   httpd:
