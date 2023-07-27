@@ -318,9 +318,6 @@ services:
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - KIBANA_HOST=http://kibana:5601
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Shellshocker93!
-    # disable strict permission checks
     command: [ "--strict.perms=false" ]
     healthcheck:
       test: filebeat test config
@@ -369,8 +366,6 @@ services:
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - KIBANA_HOST=http://kibana:5601
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Shellshocker93!
     # disable strict permission checks
     command: [ "--strict.perms=false", "-system.hostfs=/hostfs" ]
     healthcheck:
@@ -400,11 +395,6 @@ services:
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - KIBANA_HOST=http://kibana:5601
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Shellshocker93!
-      # Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker
-      # Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
-      # support for capabilities https://github.com/moby/moby/pull/38380
     cap_add:
       - NET_RAW
       - NET_ADMIN
@@ -446,8 +436,6 @@ services:
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - KIBANA_HOST=http://kibana:5601
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Shellshocker93!
     command: [ "--strict.perms=false" ]
     healthcheck:
       test: auditbeat --strict.perms=false test config
@@ -513,7 +501,6 @@ services:
       - "9200:9200"
     environment:
       node.name: es-master ## node name needs to be unique, so setting it in env vars
-      ELASTIC_PASSWORD: Shellshocker93!
       cluster.name: "elasticsearch"
       network.host: 0.0.0.0
       xpack.security.enabled: true
@@ -547,8 +534,6 @@ services:
       - zoo1
     environment:
       - XPACK_MONITORING_ELASTICSEARCH_URL="http://elasticsearch:9200"
-      - XPACK_MONITORING_ELASTICSEARCH_USERNAME="elastic"
-      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD="Shellshocker93!"
       - "LS_HEAP_SIZE=-Xms512m -Xmx512m"
     volumes:
       - /home/sinless777/services/helix/logstash/config:/usr/share/logstash/config
@@ -602,16 +587,10 @@ services:
       --strict.perms=false -e
       -E apm-server.rum.enabled=true
       -E setup.kibana.host=http://kibana:5601
-      -E setup.kibana.username=elastic
-      -E setup.kibana.password=Shellshocker93!
       -E setup.template.settings.index.number_of_replicas=0
       -E apm-server.kibana.enabled=true
       -E apm-server.kibana.host=http://kibana:5601
-      -E apm-server.kibana.username=elastic
-      -E apm-server.kibana.password=Shellshocker93!
       -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-      -E output.elasticsearch.username=elastic
-      -E output.elasticsearch.password=Shellshocker93!
       -E xpack.monitoring.enabled=true
     healthcheck:
       test: curl -s https://localhost:8200/healthcheck >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
