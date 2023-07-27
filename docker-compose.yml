@@ -453,7 +453,7 @@ services:
     environment:
       - node.name=es-master ## node name needs to be unique, so setting it in env vars
       - ELASTIC_PASSWORD=Shellshocker93!
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  ## setting jvm heap memory limits, based on the type of nodes (master, data, etc.), you can tweak this to optimize resource usage vs. performance
     volumes:
       - /home/sinless777/services/helix/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ulimits:
