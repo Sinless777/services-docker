@@ -447,6 +447,9 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: elasticsearch
     hostname: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
     environment:
       - ELASTIC_PASSWORD=Shellshocker93!
       - discovery.type=single-node
