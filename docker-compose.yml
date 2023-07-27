@@ -507,7 +507,7 @@ services:
       xpack.monitoring.collection.enabled: true
       xpack.security.audit.enabled: true
       xpack.license.self_generated.type: trial
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ES_JAVA_OPTS: -Xms1024m -Xmx1024m
       discovery.type: single-node
     volumes:
       - /home/sinless777/services/helix/elasticsearch/logs:/usr/share/elasticsearch/logs/"elasticsearch".log
