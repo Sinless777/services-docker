@@ -558,9 +558,9 @@ services:
       zoo1:
         condition: service_healthy
     environment:
-      - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
-      - XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
-      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=Shellshocker93!
+      - XPACK_MONITORING_ELASTICSEARCH_URL="http://elasticsearch:9200"
+      - XPACK_MONITORING_ELASTICSEARCH_USERNAME="elastic"
+      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD="Shellshocker93!"
       - "LS_HEAP_SIZE=-Xms512m -Xmx512m"
     volumes:
       - /home/sinless777/services/helix/logstash/config:/usr/share/logstash/config
