@@ -548,8 +548,6 @@ volumes:
 networks:
   default:
     driver: bridge
-    external: true
 
   helix-ai:
     driver: bridge
-    external: true
