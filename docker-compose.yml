@@ -268,6 +268,124 @@ services:
       - "--probe.docker=true"
       - "--weave=false"
 
+  ###   BEATS SYSTEM   ###
+
+  # How to Tune Elastic Beats Performance: A Practical Example with Batch Size, Worker Count, and More
+  # https://www.elastic.co/blog/how-to-tune-elastic-beats-performance-a-practical-example-with-batch-size-worker-count-and-more?blade=tw&hulk=social
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.9.1
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: "{{.Node.Hostname}}-filebeat"
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    networks:
+        - default
+        - helix-ai
+    configs:
+      - source: fb_config
+        target: /usr/share/filebeat/filebeat.yml
+    volumes:
+      - filebeat:/usr/share/filebeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      # This is needed for filebeat to load container log path as specified in filebeat.yml
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+
+      # # This is needed for filebeat to load jenkins build log path as specified in filebeat.yml
+      # - /var/lib/docker/volumes/jenkins_home/_data/jobs/:/var/lib/docker/volumes/jenkins_home/_data/jobs/:ro
+
+      # This is needed for filebeat to load logs for system and auth modules
+      - /var/log/:/var/log/:ro
+      # This is needed for filebeat to load logs for auditd module. you might have to install audit system
+      # on ubuntu first (sudo apt-get install -y auditd audispd-plugins)
+      - /var/log/audit/:/var/log/audit/:ro
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - KIBANA_HOST=http://kibana:5601
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93!
+    # disable strict permission checks
+    command: [ "--strict.perms=false" ]
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.9.1
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: "{{.Node.Hostname}}-metricbeat"
+    user: root
+    networks:
+      - elastic
+    configs:
+      - source: mb_config
+        target: /usr/share/metricbeat/metricbeat.yml
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - metricbeat:/usr/share/metricbeat/data
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - KIBANA_HOST=http://kibana:5601
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93!
+    # disable strict permission checks
+    command: [ "--strict.perms=false", "-system.hostfs=/hostfs" ]
+
+  packetbeat:
+    image: docker.elastic.co/beats/packetbeat:7.9.1
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: "{{.Node.Hostname}}-packetbeat"
+    user: root
+    networks:
+      - elastic
+    configs:
+      - source: pb_config
+        target: /usr/share/packetbeat/packetbeat.yml
+    volumes:
+      - packetbeat:/usr/share/packetbeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - KIBANA_HOST=http://kibana:5601
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93!
+      # Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker
+      # Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
+      # support for capabilities https://github.com/moby/moby/pull/38380
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    command: [ "--strict.perms=false" ]
+
+  auditbeat:
+    image: docker.elastic.co/beats/auditbeat:${ELASTIC_VERSION:-7.9.1}
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: "{{.Node.Hostname}}-auditbeat"
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    # https://www.elastic.co/guide/en/beats/auditbeat/current/running-on-docker.html#_special_requirements
+    # PID and CAP_ADD options are ignored as they are Not yet available in swarm mode at the moment.
+    # Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker
+    # Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
+    # support for capabilities https://github.com/moby/moby/pull/38380
+    pid: host
+    cap_add:
+      - AUDIT_CONTROL
+      - AUDIT_READ
+    networks:
+      - elastic
+    configs:
+      - source: ab_config
+        target: /usr/share/auditbeat/auditbeat.yml
+    volumes:
+      - /home/sinless777/services/helix/auditbeat/data:/usr/share/auditbeat/data
+      - /var/log:/var/log:ro
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - KIBANA_HOST=http://kibana:5601
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93!
+    command: [ "--strict.perms=false" ]
+
   ###   VAULT   ###
 
   vault-server:
@@ -296,19 +414,17 @@ services:
   ###   ELK-STACK   ###
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: elasticsearch
     hostname: elasticsearch
-    networks:
-      - helix-ai
-    ports:
-      - "9200:9200"
-      - "9300:9300"
     environment:
+      - ELASTIC_PASSWORD=Shellshocker93!
       - discovery.type=single-node
       - cluster.name=elasticsearch
       - bootstrap.memory_lock=true
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - xpack.monitoring.collection.enabled=true
+      - xpack.security.audit.enabled=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -316,15 +432,17 @@ services:
         hard: -1
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.1.1
+    image: docker.elastic.co/logstash/logstash:7.9.1
     container_name: logstash
     hostname: logstash
-    networks:
-      - helix-ai
     depends_on:
       - elasticsearch
     environment:
-      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
+      - XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
+      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=Shellshocker93!
+      - LS_JAVA_OPTS="-Xms256m -Xmx256m"
+
     volumes:
       - /home/sinless777/services/helix/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     ports:
@@ -335,7 +453,7 @@ services:
     command: logstash -f /usr/share/logstash/pipeline/logstash.conf
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.1.1
+    image: docker.elastic.co/kibana/kibana:7.9.1
     container_name: kibana
     hostname: kibana
     networks:
@@ -343,9 +461,31 @@ services:
     ports:
       - "5601:5601"
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93!
     depends_on:
       - elasticsearch
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.9.1
+    hostname: "{{.Node.Hostname}}-apm-server"
+    command: >
+      --strict.perms=false -e
+      -E apm-server.rum.enabled=true
+      -E setup.kibana.host=kibana:5601
+      -E setup.kibana.username=elastic
+      -E setup.kibana.password=Shellshocker93!
+      -E setup.template.settings.index.number_of_replicas=0
+      -E apm-server.kibana.enabled=true
+      -E apm-server.kibana.host=kibana:5601
+      -E apm-server.kibana.username=elastic
+      -E apm-server.kibana.password=Shellshocker93!
+      -E output.elasticsearch.hosts=["elasticsearch:9200"]
+      -E output.elasticsearch.username=elastic
+      -E output.elasticsearch.password=Shellshocker93!
+      -E xpack.monitoring.enabled=true
+
 
   httpd:
     image: httpd:latest
@@ -551,3 +691,14 @@ networks:
 
   helix-ai:
     driver: bridge
+
+###############
+##  Configs  ##
+###############
+configs:
+  fb_config:
+    file: /home/sinless777/services/helix/beats/filebeat/config/filebeat.yml
+  mb_config:
+    file: /home/sinless777/services/helix/beats/metricbeat/config/metricbeat.yml
+  ab_config:
+    file: /home/sinless777/services/helix/beats/auditbeat/config/auditbeat.yml
