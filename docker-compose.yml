@@ -596,11 +596,11 @@ services:
       - /home/sinless777/services/helix/packetbeat:/usr/share/packetbeat/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Shellshocker93
-      - KIBANA_HOST=http://kibana:5601
-      - LOGSTASH_HOST=logstash:9600
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=logstash:9600
     cap_add:
       - NET_RAW
       - NET_ADMIN
@@ -630,6 +630,12 @@ services:
       - elasticsearch
       - kibana
       - logstash
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=logstash:9600
     cap_add:
       - AUDIT_CONTROL
       - AUDIT_READ
@@ -639,11 +645,6 @@ services:
     volumes:
       - /home/sinless777/services/helix/auditbeat/data:/usr/share/auditbeat/data
       - /var/log:/var/log:ro
-      - ELASTICSEARCH_HOST=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Shellshocker93
-      - KIBANA_HOST=http://kibana:5601
-      - LOGSTASH_HOST=logstash:9600
     command: [ "--strict.perms=false" ]
     healthcheck:
       test: auditbeat --strict.perms=false test config
