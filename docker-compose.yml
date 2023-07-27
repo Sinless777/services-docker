@@ -399,7 +399,7 @@ services:
     volumes:
       - /home/sinless777/services/helix/vault/policy.json:/vault/policies/policy.json
       - /home/sinless777/services/helix/vault/vault.hcl:/etc/vault.hcl
-      - /home/sinless777/services/helix/data:/mnt/vault/data
+      - /home/sinless777/services/helix/vault/data:/mnt/vault/data
     command: "server -config=/etc/vault.hcl"
 
   ###   ELK-STACK   ###
