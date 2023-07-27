@@ -457,6 +457,7 @@ services:
       xpack.security.enabled: true
       xpack.monitoring.collection.enabled: true
       xpack.security.audit.enabled: true
+      xpack.license.self_generated.type: trial
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       discovery.type: single-node
     volumes:
