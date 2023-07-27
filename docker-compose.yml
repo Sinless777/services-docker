@@ -579,7 +579,7 @@ services:
       - /home/sinless777/services/helix/zookeeper/z1/data:/var/lib/zookeeper/data
       - /home/sinless777/services/helix/zookeeper/z1/logs:/var/lib/zookeeper/logs
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:22181" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:2181" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -598,7 +598,7 @@ services:
       - /home/sinless777/services/helix/zookeeper/z2/data:/var/lib/zookeeper/data
       - /home/sinless777/services/helix/zookeeper/z2/logs:/var/lib/zookeeper/logs
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:22182" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:2182" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -617,7 +617,7 @@ services:
       - /home/sinless777/services/helix/zookeeper/z3/data:/var/lib/zookeeper/data
       - /home/sinless777/services/helix/zookeeper/z3/logs:/var/lib/zookeeper/logs
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:22183" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:2183" ]
       interval: 10s
       timeout: 10s
       retries: 5
