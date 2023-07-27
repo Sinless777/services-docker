@@ -282,7 +282,7 @@ services:
       - source: fb_config
         target: /usr/share/filebeat/filebeat.yml
     volumes:
-      - filebeat:/usr/share/filebeat/data
+      - /home/sinless777/services/helix/filebeat:/usr/share/filebeat/data
       - /var/run/docker.sock:/var/run/docker.sock
       # This is needed for filebeat to load container log path as specified in filebeat.yml
       - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
@@ -316,7 +316,7 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - metricbeat:/usr/share/metricbeat/data
+      - /home/sinless777/services/helix/metricbeat:/usr/share/metricbeat/data
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
       - KIBANA_HOST=http://kibana:5601
@@ -334,7 +334,7 @@ services:
       - source: pb_config
         target: /usr/share/packetbeat/packetbeat.yml
     volumes:
-      - packetbeat:/usr/share/packetbeat/data
+      - /home/sinless777/services/helix/packetbeat:/usr/share/packetbeat/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - ELASTICSEARCH_HOST=http://elasticsearch:9200
