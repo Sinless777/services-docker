@@ -576,8 +576,8 @@ services:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
     volumes:
-      - /home/sinless777/services/helix/zookeeper/z1/data:/var/lib/zookeeper/data
-      - /home/sinless777/services/helix/zookeeper/z1/logs:/var/lib/zookeeper/logs
+      - /home/sinless777/services/helix/zookeeper/z1/data:/data
+      - /home/sinless777/services/helix/zookeeper/z1/logs:/logs
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:2181" ]
       interval: 10s
@@ -595,8 +595,8 @@ services:
       ZOOKEEPER_SERVER_ID: 2
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
     volumes:
-      - /home/sinless777/services/helix/zookeeper/z2/data:/var/lib/zookeeper/data
-      - /home/sinless777/services/helix/zookeeper/z2/logs:/var/lib/zookeeper/logs
+      - /home/sinless777/services/helix/zookeeper/z2/data:/data
+      - /home/sinless777/services/helix/zookeeper/z2/logs:/logs
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:2182" ]
       interval: 10s
@@ -614,8 +614,8 @@ services:
       ZOOKEEPER_SERVER_ID: 3
       ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
     volumes:
-      - /home/sinless777/services/helix/zookeeper/z3/data:/var/lib/zookeeper/data
-      - /home/sinless777/services/helix/zookeeper/z3/logs:/var/lib/zookeeper/logs
+      - /home/sinless777/services/helix/zookeeper/z3/data:/data
+      - /home/sinless777/services/helix/zookeeper/z3/logs:/logs
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:2183" ]
       interval: 10s
