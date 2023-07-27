@@ -411,7 +411,7 @@ services:
   vdb:
     image: mysql:8.0
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data2:/var/lib/mysql
     restart: always
     ports:
       - "3306:3306"
@@ -693,6 +693,14 @@ volumes:
       type: none
       device: /home/sinless777/services/mysql/nginx-proxy
       o: bind
+
+  mysql_data2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/helix/mysql
+      o: bind
+
 
 ################
 ##  Networks  ##
