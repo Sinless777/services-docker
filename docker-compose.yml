@@ -332,6 +332,8 @@ services:
     command: --strict.perms=false -e  # -e flag to log to stderr and disable syslog/file output
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+    volumes:
+      - /home/sinless777/services/helix/beats/heartbeat/config/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
     depends_on:
       - elasticsearch
       - kibana
