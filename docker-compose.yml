@@ -449,21 +449,20 @@ services:
     hostname: elasticsearch
     ports:
       - "9200:9200"
-      - "9300:9300"
     environment:
       - node.name=es-master ## node name needs to be unique, so setting it in env vars
       - ELASTIC_PASSWORD=Shellshocker93!
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  ## setting jvm heap memory limits, based on the type of nodes (master, data, etc.), you can tweak this to optimize resource usage vs. performance
-    volumes:
-      - /home/sinless777/services/helix/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - cluster.name="elasticsearch"
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - xpack.security.enabled=true
+      - xpack.monitoring.collection.enabled=true
+      - xpack.security.audit.enabled=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    deploy:
-      resources:
-        limits:
-          memory: 1024M
     healthcheck:
       retries: 300
       interval: 1s
@@ -484,6 +483,7 @@ services:
 
     volumes:
       - /home/sinless777/services/helix/logstash/config:/usr/share/logstash/config
+      - /home/sinless777/services/helix/logstash/pipelines:/usr/share/logstash/pipeline/  ## this is the pipeline config location
       - /home/sinless777/services/helix/logstash/logs:/mnt/logs  ## this is the logs volume path, just to stick with the original
       - /home/sinless777/services/helix/logstash/data:/usr/share/logstash/data
     ports:
