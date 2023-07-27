@@ -692,12 +692,9 @@ services:
       HTTP_PORT: 9000
       ZK_CLIENT_CNXN_SOCKET: 'org.apache.zookeeper.ClientCnxnSocketNIO'
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
+      - zoo1
+      - zoo2
+      - zoo3
 
 
   ###   MONITORING   ###
