@@ -693,3 +693,5 @@ configs:
     file: /home/sinless777/services/helix/beats/metricbeat/config/metricbeat.yml
   ab_config:
     file: /home/sinless777/services/helix/beats/auditbeat/config/auditbeat.yml
+  pb_config:
+    file: /home/sinless777/services/helix/beats/packetbeat/config/packetbeat.yml
