@@ -75,8 +75,6 @@ services:
       - jenkins:/var/jenkins_home
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    deploy:
-      replicas: 3
 
   heimdall:
     image: linuxserver/heimdall
@@ -180,9 +178,282 @@ services:
     deploy:
       replicas: 3
 
+  #################################
+  ###                           ###
+  ###       Helix Ai Stack      ###
+  ###                           ###
+  #################################
+
+  ###   CONSUL   ###
+
+  consul-server1:
+    image: hashicorp/consul:1.11.2
+    container_name: consul-server1
+    hostname: consul-server1
+    depends_on:
+      - vault-server
+    restart: always
+    volumes:
+      - /home/sinless777/services/helix/consul/server1.json:/consul/config/server1.json
+      - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
+      - /home/sinless777/services/helix/consul/acls/:/consul/config/acls/
+    ports:
+      - "8500:8500"
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+    command: "agent -bootstrap-expect=3"
+
+  consul-server2:
+    image: hashicorp/consul:1.11.2
+    container_name: consul-server2
+    hostname: consul-server2
+    depends_on:
+      - vault-server
+    restart: always
+    volumes:
+      - /home/sinless777/services/helix/consul/server2.json:/consul/config/server2.json
+      - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
+      - /home/sinless777/services/helix/consul/acls/:/consul/config/acls/
+    command: "agent -bootstrap-expect=3"
+
+  consul-server3:
+    image: hashicorp/consul:1.11.2
+    container_name: consul-server3
+    hostname: consul-server3
+    depends_on:
+      - vault-server
+    restart: always
+    volumes:
+      - /home/sinless777/services/helix/consul/server3.json:/consul/config/server3.json
+      - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
+      - /home/sinless777/services/helix/consul/acls/:/consul/config/acls/
+    command: "agent -bootstrap-expect=3"
+
+  consul-client:
+    image: hashicorp/consul:1.11.2
+    container_name: consul-client
+    hostname: consul-client
+    restart: always
+    volumes:
+      - /home/sinless777/services/helix/consul/client.json:/consul/config/client.json
+      - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
+      - /home/sinless777/services/helix/tokens/:/consul/config/tokens/
+    command: "agent"
+
+  ###   WEAVESCOPE   ###
+
+  weavescope:
+    image: weaveworks/scope:latest
+    container_name: weavescope
+    hostname: weavescope
+    pid: "host"
+    privileged: true
+    ports:
+      - "4040:4040"
+    labels:
+      - "works.weave.role=system"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    command:
+      - "--probe.docker=true"
+      - "--weave=false"
+
+  ###   VAULT   ###
+
+  vault-server:
+    image: hashicorp/vault:1.8.1
+    container_name: vault-server
+    hostname: vault-server
+    restart: always
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_ADDR: "http://vault-server:8200"
+      VAULT_API_ADDR: "http://vault-server:8200"
+      VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
+      CONSUL_HTTP_ADDR: "consul-server1:8500"
+      CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - /home/sinless777/services/helix/vault/policy.json:/vault/policies/policy.json
+      - /home/sinless777/services/helix/vault/vault.hcl:/etc/vault.hcl
+      - /home/sinless777/services/helix/data:/mnt/vault/data
+    command: "server -config=/etc/vault.hcl"
+
+  ###   ELK-STACK   ###
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+    container_name: elasticsearch
+    hostname: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - cluster.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.1.1
+    container_name: logstash
+    hostname: logstash
+    depends_on:
+      - elasticsearch
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+    volumes:
+      - /home/sinless777/services/helix/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    ports:
+      - 5044:5044
+      - 50000:50000/tcp
+      - 50000:50000/udp
+      - 9600:9600
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.1.1
+    container_name: kibana
+    hostname: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+  httpd:
+    image: httpd:latest
+    depends_on:
+      - logstash
+    ports:
+      - 4000:80
+    logging:
+      driver: gelf
+      options:
+        # Use udp://host.docker.internal:12201 when you are using Docker Desktop for Mac
+        # docs: https://docs.docker.com/docker-for-mac/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
+        # issue: https://github.com/lvthillo/docker-elk/issues/1
+        gelf-address: "udp://localhost:12201"
+
+  ###   KAFKA   ###
+
+  kafka:
+    image: confluentinc/cp-kafka:5.4.3
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.4.3
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    volumes:
+      - /home/sinless777/services/helix/zookeeper/data:/var/lib/zookeeper/data
+
+  zoonavigator:
+    image: elkozmon/zoonavigator:latest
+    container_name: zoonavigator
+    hostname: zoonavigator
+    ports:
+      - "8000:8000"
+    environment:
+      - ZOOKEEPER_HOST=zookeeper
+      - ZOOKEEPER_PORT=2181
+      - HTTP_PORT=8000
+    depends_on:
+      - zookeeper
+
+  ###   MONITORING   ###
+
+  grafana:
+    image: grafana/grafana:7.5.3
+    container_name: grafana
+    restart: always
+    volumes:
+      - /home/sinless777/services/helix/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - /home/sinless777/services/helix/grafana/provisioning/:/etc/grafana/provisioning
+      - /home/sinless777/services/helix/grafana/dashboards/:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+
+  prometheus:
+    image: prom/prometheus:v2.26.0
+    container_name: prometheus
+    restart: always
+    volumes:
+      - /home/sinless777/services/helix/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: always
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - 9100:9100
+
+  ###   SONAR   ###
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    hostname: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+    depends_on:
+      - pg
+
+  pg:
+    image: postgres:13.2
+    container_name: db
+    hostname: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - /home/sinless777/services/helix/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+
 ###############
 ##  Volumes  ##
 ###############
+
 volumes:
   jenkins:
     driver: local
@@ -211,22 +482,24 @@ volumes:
       type: none
       device: /home/sinless777/services/mobius
       o: bind
+
   wordpress:
     driver: local
     driver_opts:
       type: none
       device: /home/sinless777/services/iconiclast-art
       o: bind
+
   mysql_data:
     driver: local
     driver_opts:
       type: none
       device: /home/sinless777/services/iconiclast-art/mysql
       o: bind
+
   mysql_data1:
     driver: local
     driver_opts:
       type: none
       device: /home/sinless777/services/mysql/nginx-proxy
       o: bind
-
