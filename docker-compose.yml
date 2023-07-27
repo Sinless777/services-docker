@@ -571,7 +571,6 @@ services:
   zoo1:
     image: confluentinc/cp-zookeeper:latest
     container_name: "zoo1"
-    hostname: "zoo1"
     restart: always
     networks:
       - helix-ai
@@ -593,7 +592,6 @@ services:
   zoo2:
     image: confluentinc/cp-zookeeper:latest
     container_name: "zoo2"
-    hostname: "zoo2"
     restart: always
     networks:
       - helix-ai
@@ -615,7 +613,6 @@ services:
   zoo3:
     image: confluentinc/cp-zookeeper:latest
     container_name: "zoo3"
-    hostname: "zoo3"
     restart: always
     networks:
       - helix-ai
@@ -637,7 +634,6 @@ services:
   kafka1:
     image: confluentinc/cp-kafka:latest
     container_name: "kafka1"
-    hostname: "kafka1"
     restart: always
     depends_on:
       zoo1:
