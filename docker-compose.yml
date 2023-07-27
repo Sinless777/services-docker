@@ -460,6 +460,10 @@ services:
       memlock:
         soft: -1
         hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
     healthcheck:
       retries: 300
       interval: 1s
