@@ -464,9 +464,9 @@ services:
         soft: -1
         hard: -1
     healthcheck:
-      interval: 10s
-      retries: 80
-      test: curl -XGET -k -u elastic:Shellshocker93! https://localhost:9200
+      retries: 300
+      interval: 1s
+      test: ["CMD-SHELL", "curl -u elastic:Shellshocker93! -s http://localhost:9200/_cat/health?h=status | grep -q green"]
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.9.1
