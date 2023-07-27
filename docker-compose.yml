@@ -537,6 +537,12 @@ services:
       - elasticsearch
       - kibana
       - logstash
+    environment:
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=Shellshocker93
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=http://logstash:9600
     healthcheck:
       test: heartbeat test config
       interval: 30s
