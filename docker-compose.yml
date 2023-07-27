@@ -275,12 +275,9 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.9.1
     # https://github.com/docker/swarmkit/issues/1951
-    hostname: "{{.Node.Hostname}}-filebeat"
+    hostname: filebeat
     # Need to override user so we can access the log files, and docker.sock
     user: root
-    networks:
-        - default
-        - helix-ai
     configs:
       - source: fb_config
         target: /usr/share/filebeat/filebeat.yml
@@ -309,10 +306,8 @@ services:
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:7.9.1
     # https://github.com/docker/swarmkit/issues/1951
-    hostname: "{{.Node.Hostname}}-metricbeat"
+    hostname: metricbeat
     user: root
-    networks:
-      - elastic
     configs:
       - source: mb_config
         target: /usr/share/metricbeat/metricbeat.yml
@@ -333,10 +328,8 @@ services:
   packetbeat:
     image: docker.elastic.co/beats/packetbeat:7.9.1
     # https://github.com/docker/swarmkit/issues/1951
-    hostname: "{{.Node.Hostname}}-packetbeat"
+    hostname: packetbeat
     user: root
-    networks:
-      - elastic
     configs:
       - source: pb_config
         target: /usr/share/packetbeat/packetbeat.yml
@@ -359,7 +352,7 @@ services:
   auditbeat:
     image: docker.elastic.co/beats/auditbeat:${ELASTIC_VERSION:-7.9.1}
     # https://github.com/docker/swarmkit/issues/1951
-    hostname: "{{.Node.Hostname}}-auditbeat"
+    hostname: auditbeat
     # Need to override user so we can access the log files, and docker.sock
     user: root
     # https://www.elastic.co/guide/en/beats/auditbeat/current/running-on-docker.html#_special_requirements
@@ -371,8 +364,6 @@ services:
     cap_add:
       - AUDIT_CONTROL
       - AUDIT_READ
-    networks:
-      - elastic
     configs:
       - source: ab_config
         target: /usr/share/auditbeat/auditbeat.yml
