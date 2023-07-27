@@ -578,11 +578,6 @@ services:
     volumes:
       - /home/sinless777/services/helix/zookeeper/z1/data:/data
       - /home/sinless777/services/helix/zookeeper/z1/logs:/logs
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:2181" ]
-      interval: 10s
-      timeout: 10s
-      retries: 5
 
   zoo2:
     image: confluentinc/cp-zookeeper:7.3.2
@@ -597,11 +592,6 @@ services:
     volumes:
       - /home/sinless777/services/helix/zookeeper/z2/data:/data
       - /home/sinless777/services/helix/zookeeper/z2/logs:/logs
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:2182" ]
-      interval: 10s
-      timeout: 10s
-      retries: 5
 
   zoo3:
     image: confluentinc/cp-zookeeper:7.3.2
@@ -616,11 +606,6 @@ services:
     volumes:
       - /home/sinless777/services/helix/zookeeper/z3/data:/data
       - /home/sinless777/services/helix/zookeeper/z3/logs:/logs
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:2183" ]
-      interval: 10s
-      timeout: 10s
-      retries: 5
 
   kafka1:
     image: confluentinc/cp-kafka:7.3.2
