@@ -190,6 +190,8 @@ services:
     image: hashicorp/consul:1.11.2
     container_name: consul-server1
     hostname: consul-server1
+    networks:
+      - helix-ai
     depends_on:
       - vault-server
     restart: always
@@ -207,6 +209,8 @@ services:
     image: hashicorp/consul:1.11.2
     container_name: consul-server2
     hostname: consul-server2
+    networks:
+      - helix-ai
     depends_on:
       - vault-server
     restart: always
@@ -220,6 +224,8 @@ services:
     image: hashicorp/consul:1.11.2
     container_name: consul-server3
     hostname: consul-server3
+    networks:
+      - helix-ai
     depends_on:
       - vault-server
     restart: always
@@ -234,6 +240,8 @@ services:
     container_name: consul-client
     hostname: consul-client
     restart: always
+    networks:
+      - helix-ai
     volumes:
       - /home/sinless777/services/helix/consul/client.json:/consul/config/client.json
       - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
@@ -248,6 +256,8 @@ services:
     hostname: weavescope
     pid: "host"
     privileged: true
+    networks:
+      - helix-ai
     ports:
       - "4040:4040"
     labels:
@@ -265,6 +275,8 @@ services:
     container_name: vault-server
     hostname: vault-server
     restart: always
+    networks:
+      - helix-ai
     ports:
       - "8200:8200"
     environment:
@@ -287,6 +299,8 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
     container_name: elasticsearch
     hostname: elasticsearch
+    networks:
+      - helix-ai
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -305,6 +319,8 @@ services:
     image: docker.elastic.co/logstash/logstash:7.1.1
     container_name: logstash
     hostname: logstash
+    networks:
+      - helix-ai
     depends_on:
       - elasticsearch
     environment:
@@ -322,6 +338,8 @@ services:
     image: docker.elastic.co/kibana/kibana:7.1.1
     container_name: kibana
     hostname: kibana
+    networks:
+      - helix-ai
     ports:
       - "5601:5601"
     environment:
@@ -331,6 +349,8 @@ services:
 
   httpd:
     image: httpd:latest
+    networks:
+      - helix-ai
     depends_on:
       - logstash
     ports:
@@ -349,6 +369,8 @@ services:
     image: confluentinc/cp-kafka:5.4.3
     container_name: kafka
     hostname: kafka
+    networks:
+      - helix-ai
     ports:
       - "9092:9092"
     environment:
@@ -363,6 +385,8 @@ services:
     image: confluentinc/cp-zookeeper:5.4.3
     container_name: zookeeper
     hostname: zookeeper
+    networks:
+      - helix-ai
     ports:
       - "2181:2181"
     environment:
@@ -375,12 +399,14 @@ services:
     image: elkozmon/zoonavigator:latest
     container_name: zoonavigator
     hostname: zoonavigator
+    networks:
+      - helix-ai
     ports:
-      - "6000:8000"
+      - "8000:8000"
     environment:
       - ZOOKEEPER_HOST=zookeeper
       - ZOOKEEPER_PORT=2181
-      - HTTP_PORT=6000
+      - HTTP_PORT=8000
     depends_on:
       - zookeeper
 
@@ -390,6 +416,8 @@ services:
     image: grafana/grafana:7.5.3
     container_name: grafana
     restart: always
+    networks:
+      - helix-ai
     volumes:
       - /home/sinless777/services/helix/grafana/grafana.ini:/etc/grafana/grafana.ini
       - /home/sinless777/services/helix/grafana/provisioning/:/etc/grafana/provisioning
@@ -401,6 +429,8 @@ services:
     image: prom/prometheus:v2.26.0
     container_name: prometheus
     restart: always
+    networks:
+      - helix-ai
     volumes:
       - /home/sinless777/services/helix/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -411,6 +441,8 @@ services:
     image: prom/node-exporter
     container_name: node-exporter
     restart: always
+    networks:
+      - helix-ai
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -429,6 +461,9 @@ services:
     image: sonarqube:community
     container_name: sonarqube
     hostname: sonarqube
+    networks:
+      - helix-ai
+      - default
     ports:
       - "9000:9000"
     environment:
@@ -442,6 +477,8 @@ services:
     image: postgres:13.2
     container_name: db
     hostname: db
+    networks:
+      - helix-ai
     ports:
       - "5432:5432"
     volumes:
@@ -503,3 +540,16 @@ volumes:
       type: none
       device: /home/sinless777/services/mysql/nginx-proxy
       o: bind
+
+################
+##  Networks  ##
+################
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
+
+  helix-ai:
+    external:
+      name: helix-ai
