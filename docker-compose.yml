@@ -206,8 +206,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      vault-server:
-        condition: service_healthy
+      - vault-server
     restart: always
     volumes:
       - /home/sinless777/services/helix/consul/server1.json:/consul/config/server1.json
@@ -226,8 +225,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      vault-server:
-        condition: service_healthy
+      - vault-server
     restart: always
     volumes:
       - /home/sinless777/services/helix/consul/server2.json:/consul/config/server2.json
@@ -243,8 +241,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      vault-server:
-        condition: service_healthy
+      - vault-server
     volumes:
       - /home/sinless777/services/helix/consul/server3.json:/consul/config/server3.json
       - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
@@ -298,10 +295,9 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
+      - elasticsearch
+      - kibana
+      - logstash
     configs:
       - source: fb_config
         target: /usr/share/filebeat/filebeat.yml
@@ -340,10 +336,9 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
+      - elasticsearch
+      - kibana
+      - logstash
     healthcheck:
       test: heartbeat test config
       interval: 30s
@@ -359,10 +354,9 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
+      - elasticsearch
+      - kibana
+      - logstash
     configs:
       - source: mb_config
         target: /usr/share/metricbeat/metricbeat.yml
@@ -394,10 +388,9 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
+      - elasticsearch
+      - kibana
+      - logstash
     configs:
       - source: pb_config
         target: /usr/share/packetbeat/packetbeat.yml
@@ -438,10 +431,9 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
+      - elasticsearch
+      - kibana
+      - logstash
     cap_add:
       - AUDIT_CONTROL
       - AUDIT_READ
@@ -472,8 +464,6 @@ services:
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - helix-ai
     ports:
       - "8200:8200"
     environment:
@@ -553,10 +543,8 @@ services:
       - elasticsearch:elasticsearch
       - zoo1:zoo1
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      zoo1:
-        condition: service_healthy
+      - elasticsearch
+      - zoo1
     environment:
       - XPACK_MONITORING_ELASTICSEARCH_URL="http://elasticsearch:9200"
       - XPACK_MONITORING_ELASTICSEARCH_USERNAME="elastic"
@@ -591,10 +579,8 @@ services:
     volumes:
       - /home/sinless777/services/helix/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      logstash:
-        condition: service_healthy
+      - elasticsearch
+      - logstash
     healthcheck:
       test: curl -s http://localhost:5601 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
@@ -608,10 +594,9 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
+      - elasticsearch
+      - kibana
+      - logstash
     hostname: apm-server
     command: >
       --strict.perms=false -e
@@ -742,12 +727,9 @@ services:
       KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
+      - zoo1
+      - zoo2
+      - zoo3
     healthcheck:
       test: nc -z localhost 9092 || exit -1
       start_period: 15s
@@ -775,12 +757,9 @@ services:
       KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
+      - zoo1
+      - zoo2
+      - zoo3
     healthcheck:
       test: nc -z localhost 9093 || exit -1
       start_period: 15s
@@ -808,12 +787,9 @@ services:
       KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
+      - zoo1
+      - zoo2
+      - zoo3
     healthcheck:
       test: nc -z localhost 9094 || exit -1
       start_period: 15s
@@ -835,12 +811,9 @@ services:
       HTTP_PORT: 9000
       ZK_CLIENT_CNXN_SOCKET: 'org.apache.zookeeper.ClientCnxnSocketNIO'
     depends_on:
-      zoo1:
-        condition: service_healthy
-      zoo2:
-        condition: service_healthy
-      zoo3:
-        condition: service_healthy
+      - zoo1
+      - zoo2
+      - zoo3
 
 
   ###   MONITORING   ###
