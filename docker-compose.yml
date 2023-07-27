@@ -459,6 +459,8 @@ services:
       - xpack.monitoring.collection.enabled=true
       - xpack.security.audit.enabled=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - /home/sinless777/services/helix/elasticsearch/logs:/usr/share/elasticsearch/logs/"elasticsearch".log
     ulimits:
       memlock:
         soft: -1
