@@ -547,9 +547,9 @@ volumes:
 
 networks:
   default:
-    external:
-      name: nginx-proxy
+    driver: bridge
+    external: true
 
   helix-ai:
-    external:
-      name: helix-ai
+    driver: bridge
+    external: true
