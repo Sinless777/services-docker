@@ -451,14 +451,9 @@ services:
       - "9200:9200"
       - "9300:9300"
     environment:
+      - node.name=es-master ## node name needs to be unique, so setting it in env vars
       - ELASTIC_PASSWORD=Shellshocker93!
-      - discovery.type=single-node
-      - cluster.name=elasticsearch
-      - bootstrap.memory_lock=true
-      - xpack.security.enabled=true
-      - xpack.monitoring.collection.enabled=true
-      - xpack.security.audit.enabled=true
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
       - /home/sinless777/services/helix/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ulimits:
@@ -481,10 +476,12 @@ services:
       - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
       - XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
       - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=Shellshocker93!
-      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+      - "LS_HEAP_SIZE=-Xms512m -Xmx512m"
 
     volumes:
-      - /home/sinless777/services/helix/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - /home/sinless777/services/helix/logstash/config:/usr/share/logstash/config
+      - /home/sinless777/services/helix/logstash/logs:/mnt/logs  ## this is the logs volume path, just to stick with the original
+      - /home/sinless777/services/helix/logstash/data:/usr/share/logstash/data
     ports:
       - 5044:5044
       - 50000:50000/tcp
