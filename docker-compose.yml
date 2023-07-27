@@ -278,6 +278,11 @@ services:
     hostname: filebeat
     # Need to override user so we can access the log files, and docker.sock
     user: root
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
     configs:
       - source: fb_config
         target: /usr/share/filebeat/filebeat.yml
@@ -308,6 +313,11 @@ services:
     # https://github.com/docker/swarmkit/issues/1951
     hostname: metricbeat
     user: root
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
     configs:
       - source: mb_config
         target: /usr/share/metricbeat/metricbeat.yml
@@ -330,6 +340,11 @@ services:
     # https://github.com/docker/swarmkit/issues/1951
     hostname: packetbeat
     user: root
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
     configs:
       - source: pb_config
         target: /usr/share/packetbeat/packetbeat.yml
@@ -361,6 +376,11 @@ services:
     # Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
     # support for capabilities https://github.com/moby/moby/pull/38380
     pid: host
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
     cap_add:
       - AUDIT_CONTROL
       - AUDIT_READ
@@ -440,13 +460,19 @@ services:
       memlock:
         soft: -1
         hard: -1
+    healthcheck:
+      test: curl --silent --fail localhost:9200/_cluster/health || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 10
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.9.1
     container_name: logstash
     hostname: logstash
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     environment:
       - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
       - XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
@@ -476,11 +502,22 @@ services:
       - ELASTICSEARCH_PASSWORD=Shellshocker93!
       - SERVER_NAME=kibana
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: curl --silent --fail localhost:5601/login || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 10
 
   apm-server:
     image: docker.elastic.co/apm/apm-server:7.9.1
     container_name: apm-server
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
     hostname: apm-server
     command: >
       --strict.perms=false -e
