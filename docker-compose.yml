@@ -459,6 +459,8 @@ services:
       - xpack.monitoring.collection.enabled=true
       - xpack.security.audit.enabled=true
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - /home/sinless777/services/helix/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ulimits:
       memlock:
         soft: -1
@@ -498,19 +500,15 @@ services:
       - helix-ai
     ports:
       - "5601:5601"
-    environment:
-      - ELASTICSEARCH_ELASTICSEARCH_HOSTS=[elasticsearch:9200]
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Shellshocker93!
-      - SERVER_NAME=kibana
+    volumes:
+      - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml
     depends_on:
       elasticsearch:
         condition: service_healthy
     healthcheck:
       test: curl -u elastic:Shellshocker93! -s http://localhost:5601/api/status | grep -q '"status":"green"'
-      interval: 30s
-      timeout: 30s
-      retries: 10
+      retries: 300
+      interval: 1s
 
   apm-server:
     image: docker.elastic.co/apm/apm-server:7.9.1
