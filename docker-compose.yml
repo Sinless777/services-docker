@@ -453,7 +453,6 @@ services:
       - node.name=es-master ## node name needs to be unique, so setting it in env vars
       - ELASTIC_PASSWORD=Shellshocker93!
       - cluster.name="elasticsearch"
-      - bootstrap.memory_lock=true
       - network.host=0.0.0.0
       - xpack.security.enabled=true
       - xpack.monitoring.collection.enabled=true
