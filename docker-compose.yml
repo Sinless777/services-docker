@@ -5,7 +5,7 @@ services:
   ##########################################
   proxy:
     image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
+    restart: always
     ports:
       # These ports are in format <host-port>:<container-port>
       - '80:80' # Public HTTP Port
@@ -32,7 +32,7 @@ services:
 
   db:
     image: 'jc21/mariadb-aria:latest'
-    restart: unless-stopped
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
@@ -71,6 +71,7 @@ services:
 
   jenkins:
     image: jenkins/jenkins:lts
+    restart: always
     volumes:
       - jenkins:/var/jenkins_home
     labels:
@@ -78,15 +79,19 @@ services:
 
   heimdall:
     image: linuxserver/heimdall
+    restart: always
     privileged: true
     ports:
       - "3443:443"
       - "3081:80"
     volumes:
       - heimdall:/config
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   memcached:
     image: 'bitnami/memcached:latest'
+    restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     deploy:
@@ -120,6 +125,7 @@ services:
 
   sinlessgames:
     image: sinless777/gateway:1.1.3
+    restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     deploy:
@@ -139,6 +145,8 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -151,6 +159,8 @@ services:
     restart: always
     ports:
       - '8183:80'
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   iconiclastart:
     image: wordpress:latest
@@ -162,6 +172,8 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - wordpress:/var/www/html
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     deploy:
       replicas: 3
 
@@ -173,6 +185,7 @@ services:
 
   mobius:
     image: sinless777/mobius_gateway:latest
+    restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     deploy:
@@ -190,10 +203,11 @@ services:
     image: hashicorp/consul:1.11.2
     container_name: consul-server1
     hostname: consul-server1
-    networks:
-      - helix-ai
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - vault-server
+      vault-server:
+        condition: service_healthy
     restart: always
     volumes:
       - /home/sinless777/services/helix/consul/server1.json:/consul/config/server1.json
@@ -209,10 +223,11 @@ services:
     image: hashicorp/consul:1.11.2
     container_name: consul-server2
     hostname: consul-server2
-    networks:
-      - helix-ai
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - vault-server
+      vault-server:
+        condition: service_healthy
     restart: always
     volumes:
       - /home/sinless777/services/helix/consul/server2.json:/consul/config/server2.json
@@ -224,11 +239,12 @@ services:
     image: hashicorp/consul:1.11.2
     container_name: consul-server3
     hostname: consul-server3
-    networks:
-      - helix-ai
-    depends_on:
-      - vault-server
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      vault-server:
+        condition: service_healthy
     volumes:
       - /home/sinless777/services/helix/consul/server3.json:/consul/config/server3.json
       - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
@@ -240,8 +256,8 @@ services:
     container_name: consul-client
     hostname: consul-client
     restart: always
-    networks:
-      - helix-ai
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - /home/sinless777/services/helix/consul/client.json:/consul/config/client.json
       - /home/sinless777/services/helix/certs/:/consul/config/certs/:ro
@@ -256,12 +272,12 @@ services:
     hostname: weavescope
     pid: "host"
     privileged: true
-    networks:
-      - helix-ai
+    restart: always
     ports:
       - "4040:4040"
     labels:
       - "works.weave.role=system"
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
     command:
@@ -278,6 +294,9 @@ services:
     hostname: filebeat
     # Need to override user so we can access the log files, and docker.sock
     user: root
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -316,7 +335,10 @@ services:
   heartbeat:
     image: docker.elastic.co/beats/heartbeat:8.8.2
     container_name: heartbeat
+    restart: always
     command: --strict.perms=false -e  # -e flag to log to stderr and disable syslog/file output
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -333,6 +355,9 @@ services:
     # https://github.com/docker/swarmkit/issues/1951
     hostname: metricbeat
     user: root
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -365,6 +390,9 @@ services:
     # https://github.com/docker/swarmkit/issues/1951
     hostname: packetbeat
     user: root
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -406,6 +434,9 @@ services:
     # Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
     # support for capabilities https://github.com/moby/moby/pull/38380
     pid: host
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -439,6 +470,8 @@ services:
     container_name: vault-server
     hostname: vault-server
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - helix-ai
     ports:
@@ -468,6 +501,8 @@ services:
     volumes:
       - mysql_data2:/var/lib/mysql
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "3306:3306"
     environment:
@@ -482,6 +517,8 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
     container_name: elasticsearch
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "9200:9200"
     environment:
@@ -509,6 +546,9 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:8.8.2
     container_name: logstash
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     links:
       - elasticsearch:elasticsearch
       - zoo1:zoo1
@@ -543,8 +583,9 @@ services:
     image: docker.elastic.co/kibana/kibana:8.8.2
     container_name: kibana
     hostname: kibana
-    networks:
-      - helix-ai
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "5601:5601"
     volumes:
@@ -563,6 +604,9 @@ services:
   apm-server:
     image: docker.elastic.co/apm/apm-server:8.8.2
     container_name: apm-server
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -592,8 +636,9 @@ services:
 
   httpd:
     image: httpd:latest
-    networks:
-      - helix-ai
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - logstash
     ports:
@@ -612,6 +657,9 @@ services:
     image: confluentinc/cp-zookeeper:7.3.2
     hostname: zoo1
     container_name: zoo1
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "2181:2181"
     environment:
@@ -632,6 +680,9 @@ services:
     image: confluentinc/cp-zookeeper:7.3.2
     hostname: zoo2
     container_name: zoo2
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "2182:2182"
     environment:
@@ -652,6 +703,9 @@ services:
     image: confluentinc/cp-zookeeper:7.3.2
     hostname: zoo3
     container_name: zoo3
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "2183:2183"
     environment:
@@ -672,6 +726,9 @@ services:
     image: confluentinc/cp-kafka:7.3.2
     hostname: kafka1
     container_name: kafka1
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -696,6 +753,9 @@ services:
     image: confluentinc/cp-kafka:7.3.2
     hostname: kafka2
     container_name: kafka2
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "9093:9093"
       - "29093:29093"
@@ -720,6 +780,9 @@ services:
     image: confluentinc/cp-kafka:7.3.2
     hostname: kafka3
     container_name: kafka3
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "9094:9094"
       - "29094:29094"
@@ -743,8 +806,9 @@ services:
   zoo-navigator:
     container_name: zoo-navigator
     image: elkozmon/zoonavigator
-    networks:
-      - helix-ai
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - 9000:9000
     environment:
@@ -767,8 +831,8 @@ services:
     image: grafana/grafana:7.5.3
     container_name: grafana
     restart: always
-    networks:
-      - helix-ai
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - /home/sinless777/services/helix/grafana/grafana.ini:/etc/grafana/grafana.ini
       - /home/sinless777/services/helix/grafana/provisioning/:/etc/grafana/provisioning
@@ -780,8 +844,8 @@ services:
     image: prom/prometheus:v2.26.0
     container_name: prometheus
     restart: always
-    networks:
-      - helix-ai
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - /home/sinless777/services/helix/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -792,8 +856,8 @@ services:
     image: prom/node-exporter
     container_name: node-exporter
     restart: always
-    networks:
-      - helix-ai
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -812,24 +876,25 @@ services:
     image: sonarqube:community
     container_name: sonarqube
     hostname: sonarqube
-    networks:
-      - helix-ai
-      - default
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "9900:9000"
     environment:
       - SONARQUBE_JDBC_USERNAME=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://pg:5432/sonar
     depends_on:
       - pg
 
   pg:
     image: postgres:13.2
-    container_name: db
-    hostname: db
-    networks:
-      - helix-ai
+    container_name: pg
+    hostname: pg
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "5432:5432"
     volumes:
