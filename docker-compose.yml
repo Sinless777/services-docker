@@ -576,8 +576,8 @@ services:
     networks:
       - helix-ai
     volumes:
-      - ./Kafka/zoo_data/z1:/var/lib/zookeeper/data
-      - ./Kafka/zoo_data/z1/log:/var/lib/zookeeper/log
+      - /home/sinless777/services/helix/zookeeper/z1/data:/var/lib/zookeeper/data
+      - /home/sinless777/services/helix/zookeeper/z1/logs:/var/lib/zookeeper/logs
     environment:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -598,8 +598,8 @@ services:
     networks:
       - helix-ai
     volumes:
-      - ./Kafka/zoo_data/z2:/var/lib/zookeeper/data
-      - ./Kafka/zoo_data/z2/log:/var/lib/zookeeper/log
+      - /home/sinless777/services/helix/zookeeper/z2/data:/var/lib/zookeeper/data
+      - /home/sinless777/services/helix/zookeeper/z2/logs:/var/lib/zookeeper/logs
     environment:
       ZOOKEEPER_SERVER_ID: 2
       ZOOKEEPER_CLIENT_PORT: 2182
@@ -620,8 +620,8 @@ services:
     networks:
       - helix-ai
     volumes:
-      - ./Kafka/zoo_data/z3:/var/lib/zookeeper/data
-      - ./Kafka/zoo_data/z3/log:/var/lib/zookeeper/log
+      - /home/sinless777/services/helix/zookeeper/z3/data:/var/lib/zookeeper/data
+      - /home/sinless777/services/helix/zookeeper/z3/logs:/var/lib/zookeeper/logs
     environment:
       ZOOKEEPER_SERVER_ID: 3
       ZOOKEEPER_CLIENT_PORT: 2183
@@ -649,7 +649,7 @@ services:
     networks:
       - helix-ai
     volumes:
-      - ./Kafka/kafka_data/k1:/kafka/data
+      - /home/sinless777/services/helix/kafka/kafka1:/kafka/data
     ports:
       - 9092:9092
     environment:
