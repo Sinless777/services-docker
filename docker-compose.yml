@@ -748,6 +748,12 @@ services:
         condition: service_healthy
       zoo3:
         condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   kafka2:
     image: confluentinc/cp-kafka:7.3.2
@@ -775,6 +781,12 @@ services:
         condition: service_healthy
       zoo3:
         condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9093 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   kafka3:
     image: confluentinc/cp-kafka:7.3.2
@@ -802,6 +814,12 @@ services:
         condition: service_healthy
       zoo3:
         condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9094 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   zoo-navigator:
     container_name: zoo-navigator
