@@ -583,15 +583,9 @@ services:
       - kibana
       - logstash
     hostname: apm-server
-    command: >
-      --strict.perms=false -e
-      -E apm-server.rum.enabled=true
-      -E setup.kibana.host=http://kibana:5601
-      -E setup.template.settings.index.number_of_replicas=0
-      -E apm-server.kibana.enabled=true
-      -E apm-server.kibana.host=http://kibana:5601
-      -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
-      -E xpack.monitoring.enabled=true
+    command: --strict.perms=false -e
+    volumes:
+      - /home/sinless777/services/helix/apm_server/apm-server.yml:/usr/share/apm-server/apm-server.yml
     healthcheck:
       test: curl -s https://localhost:8200/healthcheck >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
