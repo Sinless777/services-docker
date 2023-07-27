@@ -503,7 +503,7 @@ services:
       node.name: es-master ## node name needs to be unique, so setting it in env vars
       cluster.name: "elasticsearch"
       network.host: 0.0.0.0
-      xpack.security.enabled: true
+      xpack.security.enabled: false
       xpack.monitoring.collection.enabled: true
       xpack.security.audit.enabled: true
       xpack.license.self_generated.type: trial
