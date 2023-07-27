@@ -273,7 +273,7 @@ services:
   # How to Tune Elastic Beats Performance: A Practical Example with Batch Size, Worker Count, and More
   # https://www.elastic.co/blog/how-to-tune-elastic-beats-performance-a-practical-example-with-batch-size-worker-count-and-more?blade=tw&hulk=social
   filebeat:
-    image: docker.elastic.co/beats/filebeat:7.9.1
+    image: docker.elastic.co/beats/filebeat:8.8.2
     # https://github.com/docker/swarmkit/issues/1951
     hostname: filebeat
     # Need to override user so we can access the log files, and docker.sock
@@ -309,7 +309,7 @@ services:
     command: [ "--strict.perms=false" ]
 
   metricbeat:
-    image: docker.elastic.co/beats/metricbeat:7.9.1
+    image: docker.elastic.co/beats/metricbeat:8.8.2
     # https://github.com/docker/swarmkit/issues/1951
     hostname: metricbeat
     user: root
@@ -336,7 +336,7 @@ services:
     command: [ "--strict.perms=false", "-system.hostfs=/hostfs" ]
 
   packetbeat:
-    image: docker.elastic.co/beats/packetbeat:7.9.1
+    image: docker.elastic.co/beats/packetbeat:8.8.2
     # https://github.com/docker/swarmkit/issues/1951
     hostname: packetbeat
     user: root
@@ -365,7 +365,7 @@ services:
     command: [ "--strict.perms=false" ]
 
   auditbeat:
-    image: docker.elastic.co/beats/auditbeat:${ELASTIC_VERSION:-7.9.1}
+    image: docker.elastic.co/beats/auditbeat:8.8.2
     # https://github.com/docker/swarmkit/issues/1951
     hostname: auditbeat
     # Need to override user so we can access the log files, and docker.sock
@@ -444,7 +444,7 @@ services:
   ###   ELK-STACK   ###
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
     container_name: elasticsearch
     restart: always
     ports:
@@ -471,13 +471,15 @@ services:
       test: ["CMD-SHELL", "curl -u elastic:Shellshocker93! -s http://localhost:9200/_cat/health?h=status | grep -q green"]
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.9.1
+    image: docker.elastic.co/logstash/logstash:8.8.2
     container_name: logstash
     links:
       - elasticsearch:elasticsearch
       - zoo1:zoo1
     depends_on:
       elasticsearch:
+        condition: service_healthy
+      zoo1:
         condition: service_healthy
     environment:
       - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -498,7 +500,7 @@ services:
     command: logstash -f /usr/share/logstash/pipeline/logstash.conf
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.9.1
+    image: docker.elastic.co/kibana/kibana:8.8.2
     container_name: kibana
     hostname: kibana
     networks:
@@ -516,7 +518,7 @@ services:
       interval: 1s
 
   apm-server:
-    image: docker.elastic.co/apm/apm-server:7.9.1
+    image: docker.elastic.co/apm/apm-server:8.8.2
     container_name: apm-server
     depends_on:
       elasticsearch:
@@ -542,6 +544,8 @@ services:
 
 
 
+
+
   httpd:
     image: httpd:latest
     networks:
@@ -560,50 +564,120 @@ services:
 
   ###   KAFKA   ###
 
-  kafka:
-    image: confluentinc/cp-kafka:5.4.3
-    container_name: kafka
-    hostname: kafka
+  #######################
+  ###   Kafka Stack   ###   WORKING
+  #######################
+  zoo1:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: "zoo1"
+    hostname: "zoo1"
+    restart: always
     networks:
       - helix-ai
-    ports:
-      - "9092:9092"
-    environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-    depends_on:
-      - zookeeper
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:5.4.3
-    container_name: zookeeper
-    hostname: zookeeper
-    networks:
-      - helix-ai
-    ports:
-      - "2181:2181"
-    environment:
-      - ZOOKEEPER_CLIENT_PORT=2181
-      - ZOOKEEPER_TICK_TIME=2000
     volumes:
-      - /home/sinless777/services/helix/zookeeper/data:/var/lib/zookeeper/data
+      - ./Kafka/zoo_data/z1:/var/lib/zookeeper/data
+      - ./Kafka/zoo_data/z1/log:/var/lib/zookeeper/log
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:22181" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
-  zoonavigator:
-    image: elkozmon/zoonavigator:latest
-    container_name: zoonavigator
-    hostname: zoonavigator
+  zoo2:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: "zoo2"
+    hostname: "zoo2"
+    restart: always
+    networks:
+      - helix-ai
+    volumes:
+      - ./Kafka/zoo_data/z2:/var/lib/zookeeper/data
+      - ./Kafka/zoo_data/z2/log:/var/lib/zookeeper/log
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22182:2181"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:22182" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  zoo3:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: "zoo3"
+    hostname: "zoo3"
+    restart: always
+    networks:
+      - helix-ai
+    volumes:
+      - ./Kafka/zoo_data/z3:/var/lib/zookeeper/data
+      - ./Kafka/zoo_data/z3/log:/var/lib/zookeeper/log
+    environment:
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 2183
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22183:2181"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:22183" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    container_name: "kafka1"
+    hostname: "kafka1"
+    restart: always
+    depends_on:
+      zoo1:
+        condition: service_healthy
+      zoo2:
+        condition: service_healthy
+      zoo3:
+        condition: service_healthy
+    networks:
+      - helix-ai
+    volumes:
+      - ./Kafka/kafka_data/k1:/kafka/data
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+      KAFKA_LISTENERS: PLAINTEXT://
+
+
+  zoo-navigator:
+    container_name: zoo-navigator
+    image: elkozmon/zoonavigator
     networks:
       - helix-ai
     ports:
-      - "6000:6000"
+      - 9000:9000
     environment:
-      - ZOOKEEPER_HOST=zookeeper
-      - ZOOKEEPER_PORT=2181
-      - HTTP_PORT=6000
+      CONNECTION_ZOO1_CONN: zoo1:2181
+      CONNECTION_ZOO1_NAME: zoo1
+      HTTP_PORT: 9000
+      ZK_CLIENT_CNXN_SOCKET: 'org.apache.zookeeper.ClientCnxnSocketNIO'
     depends_on:
-      - zookeeper
+      zoo1:
+        condition: service_healthy
+      zoo2:
+        condition: service_healthy
+      zoo3:
+        condition: service_healthy
+
 
   ###   MONITORING   ###
 
@@ -660,7 +734,7 @@ services:
       - helix-ai
       - default
     ports:
-      - "9000:9000"
+      - "9900:9000"
     environment:
       - SONARQUBE_JDBC_USERNAME=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
