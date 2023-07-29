@@ -198,7 +198,7 @@ services:
       timeout: 10s
       retries: 5
 
-  elastic-agent:
+  fleet-server:
     container_name: elastic-agent
     hostname: elastic-agent
     image: docker.elastic.co/beats/elastic-agent:${ELK_VERSION}
