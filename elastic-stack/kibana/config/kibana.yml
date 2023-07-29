@@ -1,29 +1,29 @@
 ---
 server.name: kibana
 server.host: 0.0.0.0
-server.publicBaseUrl: "kibana.sinlessgamesllc.com"
+server.publicBaseUrl: "${KIBANA_URL}"
 
 # Elasticsearch settings
 elasticsearch.hosts: [ "https://elasticsearch:9200" ]
-elasticsearch.ssl.certificateAuthorities: [ "/usr/share/kibana/ca.crt" ]
-elasticsearch.username: "Sinless777"
-elasticsearch.password: "M!9EZj=JENhky9^Q!dVd?A]H]Z+mXCu4Fk]t,Luu"
+elasticsearch.ssl.certificateAuthorities: [ "${CONFIG_DIR}/ca.crt" ]
+elasticsearch.username: "${ELASTIC_USERNAME}"
+elasticsearch.password: "${ELASTIC_PASSWORD}"
 
 # Elasticsearch monitoring settings
 monitoring.ui.container.elasticsearch.enabled: true
 
 # X-Pack Security
 xpack.security.enabled: true
-xpack.encryptedSavedObjects.encryptionKey: "R!ZYhi^DKuFauQR8TRz4^r?x%qQin}*+,eBc_dP=n}2+gc~PuT>p]HMP>3?w6:!6sdCw2Jh=8YKAtcQZwfVULdFn95_3odyVGuUw"
-xpack.security.encryptionKey: "R!ZYhi^DKuFauQR8TRz4^r?x%qQin}*+,eBc_dP=n}2+gc~PuT>p]HMP>3?w6:!6sdCw2Jh=8YKAtcQZwfVULdFn95_3odyVGuUw"
-xpack.reporting.encryptionKey: "R!ZYhi^DKuFauQR8TRz4^r?x%qQin}*+,eBc_dP=n}2+gc~PuT>p]HMP>3?w6:!6sdCw2Jh=8YKAtcQZwfVULdFn95_3odyVGuUw"
+xpack.encryptedSavedObjects.encryptionKey: "${ENCRYPTION_KEY}"
+xpack.security.encryptionKey: "${ENCRYPTION_KEY}"
+xpack.reporting.encryptionKey: "${ENCRYPTION_KEY}"
 
 # SSL settings
 
 server.ssl.enabled: true
-server.ssl.certificate: "/usr/share/kibana/kibana.crt"
-server.ssl.key: "/usr/share/kibana/kibana.key"
-server.ssl.certificateAuthorities: [ "/usr/share/kibana/ca.crt" ]
+server.ssl.certificate: "${CONFIG_DIR}/kibana.crt"
+server.ssl.key: "${CONFIG_DIR}/kibana.key"
+server.ssl.certificateAuthorities: [ "${CONFIG_DIR}/ca.crt" ]
 
 # fleet settings for Elastic-agent
 xpack.fleet.enabled: true
@@ -31,3 +31,6 @@ xpack.fleet.agents.enabled: true
 xpack.fleet.agents.tlsCheckDisabled: true
 xpack.fleet.agents.kibana.host: "https://kibana:5601"
 xpack.fleet.agents.elasticsearch.host: "https://elasticsearch:9200"
+
+xpack.ingestManager.enabled: true
+xpack.ingestManager.fleet.enabled: true
