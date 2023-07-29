@@ -97,6 +97,9 @@ services:
       memlock:
         soft: -1
         hard: -1
+      nofile:
+        soft: 200000
+        hard: 200000
     networks:
       - elastic-net
       - weave-net
