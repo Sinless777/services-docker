@@ -14,13 +14,13 @@ filebeat.inputs:
 output.logstash:
     enabled: true
     hosts: ["logstash:5045"]
-    ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
-    ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
-    ssl.key: "${CONFIG_DIR}/filebeat.key"
+    # ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
+    # ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
+    # ssl.key: "${CONFIG_DIR}/filebeat.key"
   
 output.elasticsearch:
   enabled: false
   hosts: ["https://elasticsearch:9200"]
-  ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
-  ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
-  ssl.key: "${CONFIG_DIR}/filebeat.key"
+  # ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
+  # ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
+  # ssl.key: "${CONFIG_DIR}/filebeat.key"

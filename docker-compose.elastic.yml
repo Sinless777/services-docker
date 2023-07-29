@@ -1,5 +1,57 @@
 version: "3.8"
 
+secrets:
+  ca.crt:
+    file: /home/sinless777/services/elastic-stack/secrets/certificate_authority/ca/ca.crt
+
+  elasticsearch.keystore:
+    file: /home/sinless777/services/elastic-stack/secrets/elasticsearch.keystore
+
+  elastic-stack-ca.p12:
+    file: /home/sinless777/services/elastic-stack/secrets/certificate_authority/elastic-stack-ca.p12
+
+  elasticsearch.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/elasticsearch/elasticsearch.key
+
+  elasticsearch.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/elasticsearch/elasticsearch.crt
+
+  kibana.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/kibana/kibana.key
+
+  kibana.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/kibana/kibana.crt
+
+  logstash.pkcs8.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/logstash/logstash.pkcs8.key
+
+  logstash.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/logstash/logstash.key
+
+  logstash.p12:
+    file: /home/sinless777/services/elastic-stack/secrets/keystores/logstash/logstash.p12
+
+  logstash.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/logstash/logstash.crt
+
+  filebeat.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/filebeat/filebeat.key
+
+  filebeat.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/filebeat/filebeat.crt
+
+  metricbeat.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/metricbeat/metricbeat.key
+
+  metricbeat.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/metricbeat/metricbeat.crt
+
+  packetbeat.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/packetbeat/packetbeat.key
+
+  packetbeat.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/packetbeat/packetbeat.crt
+
 ################
 ##  NETWORKS  ##
 ################
@@ -29,6 +81,15 @@ services:
     volumes:
       - /home/sinless777/services/elastic-stack/elasticsearch/config/elasticsearch.yml:${ELASTIC_DIR}/config/elasticsearch.yml:ro
       - /home/sinless777/services/elastic-stack/elasticsearch/data:/usr/share/elasticsearch/data
+    secrets:
+      - source: elasticsearch.keystore
+        target: ${ELASTIC_DIR}/config/elasticsearch.keystore
+      - source: ca.crt
+        target: ${ELASTIC_DIR}/config/ca.crt
+      - source: elasticsearch.cert
+        target: ${ELASTIC_DIR}/config/elasticsearch.crt
+      - source: elasticsearch.key
+        target: ${ELASTIC_DIR}/config/elasticsearch.key
     expose:
       - 9200
       - 9300
@@ -62,7 +123,15 @@ services:
       CONFIG_DIR: ${KIBANA_DIR}/config
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${KIBANA_PASSWORD}
+      ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
       KIBANA_URL: ${KIBANA_URL}
+    secrets:
+      - source: ca.crt
+        target: ${KIBANA_DIR}/config/ca.crt
+      - source: kibana.cert
+        target: ${KIBANA_DIR}/config/kibana.crt
+      - source: kibana.key
+        target: ${KIBANA_DIR}/config/kibana.key
     ports:
       - "5601:5601"
     networks:
@@ -95,6 +164,17 @@ services:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       LS_JAVA_OPTS: "-Xmx${LOGSTASH_HEAP} -Xms${LOGSTASH_HEAP}"
+    secrets:
+      - source: ca.crt
+        target: ${LOGSTASH_DIR}/config/ca.crt
+      - source: logstash.cert
+        target: ${LOGSTASH_DIR}/config/logstash.crt
+      - source: logstash.key
+        target: ${LOGSTASH_DIR}/config/logstash.key
+      - source: logstash.pkcs8.key
+        target: ${LOGSTASH_DIR}/config/logstash.pkcs8.key
+      - source: logstash.p12
+        target: ${LOGSTASH_DIR}/config/logstash.p12
     networks:
       - elastic-net
       - weave-net
@@ -177,6 +257,13 @@ services:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       LS_JAVA_OPTS: "-Xmx${PACKETBEAT_HEAP} -Xms${PACKETBEAT_HEAP}"
+    secrets:
+      - source: ca.crt
+        target: ${PACKETBEAT_DIR}/config/ca.crt
+      - source: packetbeat.cert
+        target: ${PACKETBEAT_DIR}/config/packetbeat.crt
+      - source: packetbeat.key
+        target: ${PACKETBEAT_DIR}/config/packetbeat.key
     networks:
       - elastic-net
       - weave-net
@@ -205,6 +292,15 @@ services:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       LS_JAVA_OPTS: "-Xmx${METRICBEAT_HEAP} -Xms${METRICBEAT_HEAP}"
+    secrets:
+      - source: elastic-stack-ca.p12
+        target: /etc/pki/ca-trust/source/anchors/elastic-stack-ca.p12
+      - source: ca.crt
+        target: /etc/pki/ca-trust/source/anchors/ca.crt
+      - source: metricbeat.cert
+        target: ${METRICBEAT_DIR}/config/metricbeat.crt
+      - source: metricbeat.key
+        target: ${METRICBEAT_DIR}/config/metricbeat.key
     networks:
       - elastic-net
       - weave-net
@@ -226,6 +322,13 @@ services:
     environment:
       CONFIG_DIR: ${FILEBEAT_DIR}/config
       LS_JAVA_OPTS: "-Xmx${FILEBEAT_HEAP} -Xms${FILEBEAT_HEAP}"
+    secrets:
+      - source: ca.crt
+        target: ${FILEBEAT_DIR}/config/ca.crt
+      - source: filebeat.cert
+        target: ${FILEBEAT_DIR}/config/filebeat.crt
+      - source: filebeat.key
+        target: ${FILEBEAT_DIR}/config/filebeat.key
     expose:
       - 9000
     networks:
