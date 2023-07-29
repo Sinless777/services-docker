@@ -89,7 +89,7 @@ services:
               properties:
                 bootstrap.servers: "kafka-1:29072"
     ports:
-      - 8080:8080
+      - 8800:8080
     links:
       - kafka-0
       - schema-registry-0
