@@ -1,0 +1,163 @@
+version: "3.9"
+
+################
+##  Networks  ##
+################
+networks:
+  home-net:
+    driver: bridge
+
+  weave-net:
+    driver: bridge
+
+  proxy-net:
+    driver: bridge
+
+services:
+  ##########################################
+  ##  Network Load Balancer for Services  ##
+  ##########################################
+  proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: always
+    networks:
+      - proxy-net
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      - '21:21' # FTP
+    environment:
+      # Mysql/Maria connection parameters:
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    restart: always
+    networks:
+      - proxy-net
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  ##########################
+  ##  Network Controller  ##
+  ##########################
+
+  unifi:
+    image: linuxserver/unifi-controller
+    restart: always
+    networks:
+      - home-net
+      - weave-net
+      - proxy-net
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - MEM_LIMIT=4096 #optional
+      - MEM_STARTUP=1024 #optional
+    volumes:
+      - unifi:/config
+    ports:
+      - "3478:3478/udp"
+      - "10001:10001/udp"
+      - "8080:8080"
+      - "8443:8443"
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+
+  ###################
+  ##   WEAVE_NET   ##
+  ###################
+
+  ###   WATCHTOWER   ###
+  watchtower:
+    image: containrrr/watchtower
+    restart: always
+    networks:
+      - weave-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  ###   WEAVESCOPE   ###
+  weavescope:
+    image: weaveworks/scope:latest
+    container_name: weavescope
+    hostname: weavescope
+    pid: "host"
+    privileged: true
+    restart: always
+    networks:
+      - weave-net
+    ports:
+      - "4040:4040"
+    labels:
+      works.weave.role: system
+      com.centurylinklabs.watchtower.enable: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    command:
+      - "--probe.docker=true"
+      - "--weave=false"
+
+
+
+###############
+##  Volumes  ##
+###############
+
+volumes:
+
+  unifi:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/unifi
+      o: bind
+
+  mysql_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/mysql/nginx-proxy
+      o: bind
+
+  mysql_data2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/helix/mysql
+      o: bind
+
+
+
