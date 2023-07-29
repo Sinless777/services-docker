@@ -62,7 +62,7 @@ services:
       - source: ca.crt
         target: /etc/pki/ca-trust/source/anchors/ca.crt
       - source: packetbeat.cert
-        target: ${PACKETBEAT_DIR}/config/packetbeat.crt
+        target: ${PACKETBEAT_DIR}/config/packetbeat.cert
       - source: packetbeat.key
         target: ${PACKETBEAT_DIR}/config/packetbeat.key
     networks:
