@@ -81,8 +81,3 @@ xpack.fleet.agentPolicies:
                 value: 8200
               - name: url
                 value: "http://localhost:8200"
-
-
-telemetry:
-  optIn: false
-  allowChangingOptInStatus: false
