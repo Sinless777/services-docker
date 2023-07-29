@@ -43,7 +43,7 @@ services:
   packetbeat:
     container_name: packetbeat
     hostname: packetbeat
-    user: root
+    user: "0"
     image: docker.elastic.co/beats/packetbeat:${ELK_VERSION}
     restart: unless-stopped
     cap_add:
