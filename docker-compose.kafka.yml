@@ -63,6 +63,7 @@ volumes:
 
 services:
   akhq:
+    container_name: akhq
     networks:
       - kafka-net
       - proxy-net
@@ -97,6 +98,7 @@ services:
       - kafka-1
 
   zookeeper-0:
+    container_name: zookeeper-0
     image: confluentinc/cp-zookeeper:${CONFLUENT_VERSION:-latest}
     restart: unless-stopped
     networks:
@@ -112,6 +114,7 @@ services:
       ZOOKEEPER_ADMIN_ENABLE_SERVER: 'false'
 
   kafka-0:
+    container_name: kafka-0
     image: confluentinc/cp-kafka:${CONFLUENT_VERSION:-latest}
     restart: unless-stopped
     networks:
@@ -144,6 +147,7 @@ services:
       - zookeeper-0
 
   schema-registry-0:
+    container_name: schema-registry-0
     image: confluentinc/cp-schema-registry:${CONFLUENT_VERSION:-latest}
     restart: unless-stopped
     networks:
@@ -162,6 +166,7 @@ services:
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: 'INFO'
 
   connect-0:
+    container_name: connect-0
     image: confluentinc/cp-kafka-connect:${CONFLUENT_VERSION:-latest}
     restart: unless-stopped
     networks:
@@ -199,6 +204,7 @@ services:
       CONNECT_PLUGIN_PATH: ' /usr/share/java/'
 
   connect-1:
+    container_name: connect-1
     image: confluentinc/cp-kafka-connect:${CONFLUENT_VERSION:-latest}
     restart: unless-stopped
     networks:
@@ -237,6 +243,7 @@ services:
 
   # ANOTHER CLUSTER
   zookeeper-1:
+    container_name: zookeeper-1
     image: confluentinc/cp-zookeeper:${CONFLUENT_VERSION:-latest}
     restart: unless-stopped
     networks:
@@ -252,6 +259,7 @@ services:
       ZOOKEEPER_ADMIN_ENABLE_SERVER: 'false'
 
   kafka-1:
+    container_name: kafka-1
     image: confluentinc/cp-kafka:${CONFLUENT_VERSION:-latest}
     restart: unless-stopped
     networks:
