@@ -81,6 +81,7 @@ services:
     volumes:
       - /home/sinless777/services/elastic-stack/elasticsearch:${ELASTIC_DIR}
       - /home/sinless777/services/elastic-stack/elasticsearch/config/elasticsearch.yml:${ELASTIC_DIR}/config/elasticsearch.yml:ro
+      - /home/sinless777/services/elastic-stack/elasticsearch/data:/usr/share/elasticsearch/data
     secrets:
       - source: elasticsearch.keystore
         target: ${ELASTIC_DIR}/config/elasticsearch.keystore
