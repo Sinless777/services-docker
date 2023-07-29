@@ -143,11 +143,6 @@ services:
       com.centurylinklabs.watchtower.enable: true
     deploy:
       replicas: 3
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "https://localhost:7443"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
 
   mobius:
     image: sinless777/mobius_gateway:latest
@@ -159,8 +154,3 @@ services:
       com.centurylinklabs.watchtower.enable: true
     deploy:
       replicas: 3
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
