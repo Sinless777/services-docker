@@ -106,7 +106,8 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     healthcheck:
-      test: [ "CMD-SHELL", "curl -u ${ELASTIC_USERNAME}:${ELASTIC_PASSWORD} -s http://localhost:9200/_cat/health?h=status | grep -q green" ]
+      test: curl --cacert ${ELASTIC_DIR}/config/ca.crt --max-time 120 --retry 120 --retry-delay 1 --show-error --silent https://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@localhost:9200
+
       retries: 300
       interval: 1s
 
