@@ -122,7 +122,7 @@ services:
     environment:
       CONFIG_DIR: ${KIBANA_DIR}/config
       ELASTIC_USERNAME: kibana_system
-      ELASTIC_PASSWORD: ${KIBANA_PASSWORD}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
       KIBANA_URL: ${KIBANA_URL}
     secrets:
