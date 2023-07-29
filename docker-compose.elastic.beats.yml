@@ -74,13 +74,29 @@ services:
   metricbeat:
     container_name: metricbeat
     hostname: metricbeat
-    user: root
+    user: root #/var/run/docker.sock
     image: docker.elastic.co/beats/metricbeat:${ELK_VERSION}
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    command: "/bin/bash -c while true; do metricbeat -e; sleep 1; done"
+    entrypoint: [ ]
+    command: >
+      bash -c '
+        metricbeat -e \
+          -E setup.kibana.enabled=true \
+          -E setup.kibana.host=http://kibana:5601 \
+          -E setup.template.enabled=true \
+          -E setup.template.settings.index.number_of_replicas=0 \
+          -E http.enabled=true \
+          -E http.host=0.0.0.0 \
+          -E http.port=5066 \
+          -E monitoring.enabled=false \
+          -E output.elasticsearch.username=elastic \
+          -E output.elasticsearch.password=$ELASTIC__INITIAL_PASSWORD \
+          -E output.elasticsearch.hosts=["http://elasticsearch:9200"] \
+          -E monitoring.cluster_uuid=$(cat /usr/share/setup/cluster_uuid) \
+        '
     volumes:
       - ${SECRETS_DIR}/elastic_stack/metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
       - /var/run/docker.sock:/var/run/docker.sock
@@ -103,13 +119,38 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
+      co.elastic.logs/enabled: false
+      co.elastic.metrics/raw: "[{\"module\":\"beat\",\"hosts\":\"metricbeat:5066\",\"period\":\"10s\",\"xpack.enabled\":\"true\"}]"
+    healthcheck:
+      interval: 10s
+      retries: 12
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5066/
+
+
 
   filebeat:
     container_name: filebeat
     hostname: filebeat
     image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
     restart: unless-stopped
-    command: filebeat -e -strict.perms=false
+    user: root #/var/run/docker.sock
+    entrypoint: [ ]
+    command: >
+      bash -c '
+        filebeat -e \
+          -E setup.kibana.enabled=true \
+          -E setup.kibana.host=http://kibana:5601 \
+          -E setup.template.enabled=true \
+          -E setup.template.settings.index.number_of_replicas=0 \
+          -E http.enabled=true \
+          -E http.host=0.0.0.0 \
+          -E http.port=5066 \
+          -E monitoring.enabled=false \
+          -E output.elasticsearch.username=elastic \
+          -E output.elasticsearch.password=$ELASTIC__INITIAL_PASSWORD \
+          -E output.elasticsearch.hosts=["http://elasticsearch:9200"] \
+          -E monitoring.cluster_uuid=$(cat /usr/share/setup/cluster_uuid) \
+      '
     volumes:
       - ${SECRETS_DIR}/elastic_stack/filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
     environment:
@@ -129,3 +170,9 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
+      co.elastic.logs/enabled: false
+      co.elastic.metrics/raw: "[{\"module\":\"beat\",\"hosts\":\"filebeat:5066\",\"period\":\"10s\",\"xpack.enabled\":\"true\"}]"
+    healthcheck:
+      interval: 10s
+      retries: 12
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5066/
