@@ -5,7 +5,8 @@ version: "3.9"
 ################
 networks:
   tyler-net:
-    external: true
+    name: tyler-net
+    driver: bridge
 
   weave-net:
     external: true
