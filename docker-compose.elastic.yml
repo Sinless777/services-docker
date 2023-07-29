@@ -13,6 +13,9 @@ networks:
   weave-net:
     external: true
 
+  kafka-net:
+    external: true
+
 
 ###############
 ##  Configs  ##
@@ -100,9 +103,10 @@ services:
     networks:
       - elastic-net
       - weave-net
+      - kafka-net
     links:
       - elasticsearch:elasticsearch
-      - zoo1:zoo1
+      - zookeeper-0:zookeeper-0
     depends_on:
       - elasticsearch
       - zoo1
