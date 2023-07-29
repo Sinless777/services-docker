@@ -266,10 +266,7 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    command:
-      - /bin/bash
-      - -c
-      - while true; do metricbeat -e; sleep 1; done
+    command: "/bin/bash -c while true; do metricbeat -e; sleep 1; done"
     volumes:
       - /home/sinless777/services/elastic-stack/metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
       - /var/run/docker.sock:/var/run/docker.sock
