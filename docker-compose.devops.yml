@@ -39,6 +39,7 @@ services:
 
   jenkins:
     image: jenkins/jenkins:lts
+    container_name: jenkins
     restart: always
     privileged: true
     user: root
@@ -51,9 +52,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       com.centurylinklabs.watchtower.enable: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 1s
+      timeout: 5s
+      retries: 5
 
   heimdall:
     image: linuxserver/heimdall
+    container_name: heimdall
     restart: always
     privileged: true
     networks:
@@ -67,3 +74,8 @@ services:
       - heimdall:/config
     labels:
       com.centurylinklabs.watchtower.enable: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3443"]
+      interval: 1s
+      timeout: 5s
+      retries: 5
