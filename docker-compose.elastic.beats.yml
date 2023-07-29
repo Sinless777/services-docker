@@ -60,7 +60,7 @@ services:
       LS_JAVA_OPTS: "-Xmx${PACKETBEAT_HEAP} -Xms${PACKETBEAT_HEAP}"
     secrets:
       - source: ca.crt
-        target: ${PACKETBEAT_DIR}/config/ca.crt
+        target: /etc/pki/ca-trust/source/anchors/ca.crt
       - source: packetbeat.cert
         target: ${PACKETBEAT_DIR}/config/packetbeat.crt
       - source: packetbeat.key
