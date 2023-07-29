@@ -52,24 +52,6 @@ secrets:
   packetbeat.cert:
     file: /home/sinless777/services/elastic-stack/secrets/certificates/packetbeat/packetbeat.crt
 
-###############
-##  Volumes  ##
-###############
-volumes:
-  esdata01:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/elastic-stack/esdata01
-      o: bind
-
-  kibanadata:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/elastic-stack/kibanadata
-      o: bind
-
 ################
 ##  NETWORKS  ##
 ################
@@ -100,8 +82,8 @@ services:
       bootstrap.memory_lock: "true"
       discovery.type: single-node
     volumes:
-      - data:${ELASTIC_DIR}
-      - ./elasticsearch/config/elasticsearch.yml:${ELASTIC_DIR}/config/elasticsearch.yml:ro
+      - /home/sinless777/services/elastic-stack/elasticsearch:${ELASTIC_DIR}
+      - /home/sinless777/services/elastic-stack/elasticsearch/config/elasticsearch.yml:${ELASTIC_DIR}/config/elasticsearch.yml:ro
     secrets:
       - source: elasticsearch.keystore
         target: ${ELASTIC_DIR}/config/elasticsearch.keystore
@@ -136,7 +118,8 @@ services:
         ELK_VERSION: $ELK_VERSION
     restart: unless-stopped
     volumes:
-      - ./kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
+      - /home/sinless777/services/elastic-stack/kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
+      - /home/sinless777/services/elastic-stack/kibana/data:/usr/share/kibana/data
     environment:
       CONFIG_DIR: ${KIBANA_DIR}/config
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
@@ -170,9 +153,9 @@ services:
         ELK_VERSION: $ELK_VERSION
     restart: unless-stopped
     volumes:
-      - ./logstash/config/logstash.yml:${LOGSTASH_DIR}/config/logstash.yml:ro
-      - ./logstash/pipeline/logstash.conf:${LOGSTASH_DIR}/pipeline/logstash.conf:ro
-      - ./logstash/pipeline/metricbeat.conf:${LOGSTASH_DIR}/pipeline/metricbeat.conf
+      - /home/sinless777/services/elastic-stack/logstash/config/logstash.yml:${LOGSTASH_DIR}/config/logstash.yml:ro
+      - /home/sinless777/services/elastic-stack/logstash/pipeline/logstash.conf:${LOGSTASH_DIR}/pipeline/logstash.conf:ro
+      - /home/sinless777/services/elastic-stack/logstash/pipeline/metricbeat.conf:${LOGSTASH_DIR}/pipeline/metricbeat.conf
     environment:
       CONFIG_DIR: ${LOGSTASH_DIR}/config
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
@@ -249,7 +232,7 @@ services:
       - NET_RAW
     command: packetbeat -e -strict.perms=false
     volumes:
-      - ./packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
+      - /home/sinless777/services/elastic-stack/packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       CONFIG_DIR: ${PACKETBEAT_DIR}/config
@@ -288,7 +271,7 @@ services:
       - -c
       - while true; do metricbeat -e; sleep 1; done
     volumes:
-      - ./metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
+      - /home/sinless777/services/elastic-stack/metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       CONFIG_DIR: ${METRICBEAT_DIR}/config
@@ -322,7 +305,7 @@ services:
     restart: unless-stopped
     command: filebeat -e -strict.perms=false
     volumes:
-      - ./filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
+      - /home/sinless777/services/elastic-stack/filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
     environment:
       CONFIG_DIR: ${FILEBEAT_DIR}/config
       LS_JAVA_OPTS: "-Xmx${FILEBEAT_HEAP} -Xms${FILEBEAT_HEAP}"
