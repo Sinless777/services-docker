@@ -7,11 +7,11 @@ setup.template.overwrite: true
 setup.kibana.host: "https://kibana:5601"
 setup.kibana.protocol: "https"
 setup.kibana.ssl.enabled: true
-setup.kibana.username: '${ELASTIC_USERNAME:}'
-setup.kibana.password: '${ELASTIC_PASSWORD:}'
+setup.kibana.username: 'Sinless777'
+setup.kibana.password: 'M!9EZj=JENhky9^Q!dVd?A]H]Z+mXCu4Fk]t,Luu'
 setup.kibana.ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
-setup.kibana.ssl.certificate: ${CONFIG_DIR}/packetbeat.crt
-setup.kibana.ssl.key: ${CONFIG_DIR}/packetbeat.key
+setup.kibana.ssl.certificate: /usr/share/packetbeat/packetbeat.crt
+setup.kibana.ssl.key: /usr/share/packetbeat/packetbeat.key
 setup.kibana.ssl.verification_mode: none
 
 packetbeat.interfaces.device: any
@@ -55,8 +55,8 @@ packetbeat.protocols.cassandra:
 output.logstash:
   hosts: ["logstash:5044"]
   ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
-  ssl.certificate: ${CONFIG_DIR}/packetbeat.crt
-  ssl.key: ${CONFIG_DIR}/packetbeat.key
+  ssl.certificate: /usr/share/packetbeat/packetbeat.crt
+  ssl.key: /usr/share/packetbeat/packetbeat.key
   index: packetbeat
 
 # Commented out for reference if you wanted
@@ -68,7 +68,7 @@ output.logstash:
 #  username: '${ELASTIC_USERNAME}'
 #  password: '${ELASTIC_PASSWORD}'
 #  ssl.enabled: true
-#  ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
+#  ssl.certificate_authorities: ["/usr/share/packetbeat/ca.crt"]
 #  ssl.verification_mode: none
 #  ssl.certificate: "${CONFIG_DIR}/logstash.crt"
 #  ssl.key: "${CONFIG_DIR}/logstash.key"

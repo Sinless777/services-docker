@@ -1,0 +1,15 @@
+node.name: "logstash"
+http.host: "0.0.0.0"
+
+path.settings: /usr/share/logstash
+
+# X-Pack Security Options
+xpack.management.elasticsearch.username: "Sinless777"
+xpack.management.elasticsearch.password: "M!9EZj=JENhky9^Q!dVd?A]H]Z+mXCu4Fk]t,Luu"
+
+xpack.monitoring.elasticsearch.username: "Sinless777"
+xpack.monitoring.elasticsearch.password: "M!9EZj=JENhky9^Q!dVd?A]H]Z+mXCu4Fk]t,Luu"
+xpack.monitoring.elasticsearch.ssl.certificate_authority: "/usr/share/logstash/ca.crt"
+
+# Metricbeat settings
+monitoring.enabled: false
