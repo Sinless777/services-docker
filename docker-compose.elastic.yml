@@ -69,10 +69,7 @@ services:
   elasticsearch:
     container_name: elasticsearch
     hostname: elasticsearch
-    build:
-      context: elastic/elasticsearch/
-      args:
-        ELK_VERSION: ${ELK_VERSION}
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
     restart: unless-stopped
     environment:
       CONFIG_DIR: ${ELASTIC_DIR}/config
@@ -112,10 +109,7 @@ services:
   kibana:
     container_name: kibana
     hostname: kibana
-    build:
-      context: elastic/kibana/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
     restart: unless-stopped
     volumes:
       - /home/sinless777/services/elastic-stack/kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
@@ -147,10 +141,7 @@ services:
   logstash:
     container_name: logstash
     hostname: logstash
-    build:
-      context: elastic/logstash/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
     restart: unless-stopped
     volumes:
       - /home/sinless777/services/elastic-stack/logstash/config/logstash.yml:${LOGSTASH_DIR}/config/logstash.yml:ro
@@ -187,14 +178,36 @@ services:
       - elasticsearch
       - kibana
 
+  elastic-agent:
+    container_name: elastic-agent
+    hostname: elastic-agent
+    image: docker.elastic.co/beats/elastic-agent:${ELK_VERSION}
+    restart: unless-stopped
+    environment:
+      ## Fleet
+      FLEET_SERVER_ENABLE: "true"
+      FLEET_SERVER_ELASTICSEARCH_HOST: "https://elasticsearch:9200"
+      FLEET_CA: '/ca.crt'
+      ELK_VERSION: ${ELK_VERSION}
+      KIBANA_HOST: "https://kibana:5601"
+      ELASTICSEARCH_USERNAME: ${ELASTIC_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+      FLEET_ENROLL_INSECURE: 1
+      ENROLL_FORCE: 1
+      PREFLIGHT_CHECK: 1
+    secrets:
+      - source: ca.crt
+        target: /ca.crt
+    ports:
+      - "22:22"
+
+  ###   BEATS   ###
+
   packetbeat:
     container_name: packetbeat
     hostname: packetbeat
     user: root
-    build:
-      context: elastic/packetbeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: docker.elastic.co/beats/packetbeat:${ELK_VERSION}
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -227,10 +240,7 @@ services:
     container_name: metricbeat
     hostname: metricbeat
     user: root
-    build:
-      context: elastic/metricbeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: docker.elastic.co/beats/metricbeat:${ELK_VERSION}
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -264,10 +274,7 @@ services:
   filebeat:
     container_name: filebeat
     hostname: filebeat
-    build:
-      context: elastic/filebeat/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
     restart: unless-stopped
     command: filebeat -e -strict.perms=false
     volumes:
