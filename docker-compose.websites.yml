@@ -26,7 +26,7 @@ services:
     deploy:
       replicas: 3
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://sinlessgames:7443"]
+      test: ["CMD", "curl", "-f", "https://sinlessgamesllc.com"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -42,7 +42,7 @@ services:
     deploy:
       replicas: 3
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://mobius:3000"]
+        test: ["CMD", "curl", "-f", "https://mobiusinferniummc.com"]
         interval: 10s
         timeout: 10s
         retries: 5
