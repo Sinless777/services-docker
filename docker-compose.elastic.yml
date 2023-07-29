@@ -1,0 +1,362 @@
+version: "3.9"
+
+################
+##  NETWORKS  ##
+################
+networks:
+  elastic-net:
+    driver: bridge
+
+  proxy-net:
+    external: true
+
+  weave-net:
+    external: true
+
+
+###############
+##  Configs  ##
+###############
+configs:
+  fb_config:
+    file: /home/sinless777/services/helix/beats/filebeat/config/filebeat.yml
+
+  mb_config:
+    file: /home/sinless777/services/helix/beats/metricbeat/config/metricbeat.yml
+
+  ab_config:
+    file: /home/sinless777/services/helix/beats/auditbeat/config/auditbeat.yml
+
+  pb_config:
+    file: /home/sinless777/services/helix/beats/packetbeat/config/packetbeat.yml
+
+services:
+  ################################
+  ###   ELASTIC FLEET SYSTEM   ###
+  ################################
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    container_name: elasticsearch
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+      co.elastic.logs/module: elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      node.name: es-master
+      cluster.name: "elasticsearch"
+      discovery.type: single-node
+      ELASTIC_PASSWORD: "Shellshocker93"
+      bootstrap.memory_lock: true
+      xpack.security.enabled: true
+      xpack.monitoring.collection.enabled: true
+      xpack.security.audit.enabled: true
+      xpack.license.self_generated.type: trial
+      ES_JAVA_OPTS: -Xms1024m -Xmx1024m
+
+    volumes:
+      - /home/sinless777/services/helix/elasticsearch/logs:/usr/share/elasticsearch/logs/"elasticsearch".log
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      interval: 10s
+      timeout: 10s
+      retries: 120
+      test: [ "CMD-SHELL", "curl -u elastic:Shellshocker93 -s http://localhost:9200/_cat/health?h=status | grep -q green" ]
+
+  elastic-agent:
+    image: docker.elastic.co/beats/elastic-agent:8.9.0
+    container_name: elastic-agent
+    restart: always
+    user: root
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+      co.elastic.logs/module: elastic-agent
+    environment:
+      FLEET_SERVER_ENABLE: true
+      FLEET_SERVER_ELASTICSEARCH_HOST: http://elasticsearch:9200
+      FLEET_SERVER_ELASTICSEARCH_USERNAME: elastic
+      FLEET_SERVER_ELASTICSEARCH_PASSWORD: Shellshocker93
+    ports:
+      - "8220:8220"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.9.0
+    container_name: logstash
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+      co.elastic.logs/module: logstash
+    links:
+      - elasticsearch:elasticsearch
+      - zoo1:zoo1
+    depends_on:
+      - elasticsearch
+      - zoo1
+    environment:
+      - xpack.monitoring.enabled=false
+      - "LS_HEAP_SIZE=-Xms512m -Xmx512m"
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD="Shellshocker93"
+      - ELASTIC_HOSTS="http://elasticsearch:9200"
+    volumes:
+      - /home/sinless777/services/helix/logstash/config:/usr/share/logstash/config
+      - /home/sinless777/services/helix/logstash/pipelines:/usr/share/logstash/pipeline/  ## this is the pipeline config location
+      - /home/sinless777/services/helix/logstash/logs:/mnt/logs  ## this is the logs volume path, just to stick with the original
+      - /home/sinless777/services/helix/logstash/data:/usr/share/logstash/data
+    ports:
+      - 5044:5044
+      - 50000:50000/tcp
+      - 50000:50000/udp
+      - 9600:9600
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+    healthcheck:
+      test: bin/logstash -t
+      interval: 60s
+      timeout: 50s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.9.0
+    container_name: kibana
+    hostname: kibana"
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+      co.elastic.logs/module: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      SERVERNAME: kibana
+      ELASTICSEARCH_USERNAME: kibana
+      ELASTICSEARCH_PASSWORD: Shellshocker93
+    volumes:
+      - /home/sinless777/services/helix/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    depends_on:
+      - elasticsearch
+      - logstash
+    healthcheck:
+      test: curl -s http://localhost:5601 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.9.0
+    container_name: apm-server
+    restart: always
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+    depends_on:
+      - elasticsearch
+      - kibana
+      - logstash
+    hostname: apm-server
+    command: --strict.perms=false -e
+    volumes:
+      - /home/sinless777/services/helix/apm_server/apm-server.yml:/usr/share/apm-server/apm-server.yml
+    healthcheck:
+      test: curl -s https://localhost:8200/healthcheck >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  httpd:
+    image: httpd:latest
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - logstash
+    ports:
+      - 4000:80
+    logging:
+      driver: gelf
+      options:
+        # Use udp://host.docker.internal:12201 when you are using Docker Desktop for Mac
+        # docs: https://docs.docker.com/docker-for-mac/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
+        # issue: https://github.com/lvthillo/docker-elk/issues/1
+        gelf-address: "udp://localhost:12201"
+
+  # How to Tune Elastic Beats Performance: A Practical Example with Batch Size, Worker Count, and More
+  # https://www.elastic.co/blog/how-to-tune-elastic-beats-performance-a-practical-example-with-batch-size-worker-count-and-more?blade=tw&hulk=social
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.9.0
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: filebeat
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - elasticsearch
+      - kibana
+      - logstash
+    configs:
+      - source: fb_config
+        target: /usr/share/filebeat/filebeat.yml
+    volumes:
+      - /home/sinless777/services/helix/filebeat:/usr/share/filebeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      # This is needed for filebeat to load container log path as specified in filebeat.yml
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+
+      # # This is needed for filebeat to load jenkins build log path as specified in filebeat.yml
+      # - /var/lib/docker/volumes/jenkins_home/_data/jobs/:/var/lib/docker/volumes/jenkins_home/_data/jobs/:ro
+
+      # This is needed for filebeat to load logs for system and auth modules
+      - /var/log/:/var/log/:ro
+      # This is needed for filebeat to load logs for auditd module. you might have to install audit system
+      # on ubuntu first (sudo apt-get install -y auditd audispd-plugins)
+      - /var/log/audit/:/var/log/audit/:ro
+    environment:
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=Shellshocker93
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=http://logstash:9600
+    command: [ "--strict.perms=false" ]
+    healthcheck:
+      test: filebeat test config
+      interval: 30s
+      timeout: 15s
+      retries: 5
+
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:8.9.0
+    container_name: heartbeat
+    restart: always
+    command: --strict.perms=false -e  # -e flag to log to stderr and disable syslog/file output
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    volumes:
+      - /home/sinless777/services/helix/beats/heartbeat/config/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
+    depends_on:
+      - elasticsearch
+      - kibana
+      - logstash
+    environment:
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=Shellshocker93
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=http://logstash:9600
+    healthcheck:
+      test: heartbeat test config
+      interval: 30s
+      timeout: 15s
+      retries: 5
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.9.0
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: metricbeat
+    user: root
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - elasticsearch
+      - kibana
+    configs:
+      - source: mb_config
+        target: /usr/share/metricbeat/metricbeat.yml
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/sinless777/services/helix/metricbeat:/usr/share/metricbeat/data
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93
+      - KIBANA_HOST=http://kibana:5601
+      - LOGSTASH_HOST=logstash:9600
+    # disable strict permission checks
+    command: [ "--strict.perms=false", "-system.hostfs=/hostfs" ]
+    healthcheck:
+      test: metricbeat test config
+      interval: 30s
+      timeout: 15s
+      retries: 5
+
+  packetbeat:
+    image: docker.elastic.co/beats/packetbeat:8.9.0
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: packetbeat
+    user: root
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - elasticsearch
+      - kibana
+      - logstash
+    configs:
+      - source: pb_config
+        target: /usr/share/packetbeat/packetbeat.yml
+    volumes:
+      - /home/sinless777/services/helix/packetbeat:/usr/share/packetbeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=logstash:9600
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    command: [ "--strict.perms=false" ]
+    healthcheck:
+      test: packetbeat test config
+      interval: 30s
+      timeout: 15s
+      retries: 5
+
+  auditbeat:
+    image: docker.elastic.co/beats/auditbeat:8.9.0
+    # https://github.com/docker/swarmkit/issues/1951
+    hostname: auditbeat
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    # https://www.elastic.co/guide/en/beats/auditbeat/current/running-on-docker.html#_special_requirements
+    # PID and CAP_ADD options are ignored as they are Not yet available in swarm mode at the moment.
+    # Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker
+    # Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
+    # support for capabilities https://github.com/moby/moby/pull/38380
+    pid: host
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - elasticsearch
+      - kibana
+      - logstash
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Shellshocker93
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=logstash:9600
+    cap_add:
+      - AUDIT_CONTROL
+      - AUDIT_READ
+    configs:
+      - source: ab_config
+        target: /usr/share/auditbeat/auditbeat.yml
+    volumes:
+      - /home/sinless777/services/helix/auditbeat/data:/usr/share/auditbeat/data
+      - /var/log:/var/log:ro
+    command: [ "--strict.perms=false" ]
+    healthcheck:
+      test: auditbeat --strict.perms=false test config
+      interval: 30s
+      timeout: 15s
+      retries: 5

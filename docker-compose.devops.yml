@@ -1,0 +1,65 @@
+version: "3.9"
+
+###############
+##  Volumes  ##
+###############
+volumes:
+  jenkins:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/jenkins
+      o: bind
+
+  heimdall:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/heimdall
+      o: bind
+
+################
+##  NETWORKS  ##
+################
+networks:
+  devops-net:
+    driver: bridge
+
+  proxy-net:
+    external: true
+
+  weave-net:
+    external: true
+
+services:
+  ####################
+  ##  DevOps Stack  ##
+  ####################
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    restart: always
+    networks:
+      - devops-net
+      - proxy-net
+      - weave-net
+    volumes:
+      - jenkins:/var/jenkins_home
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  heimdall:
+    image: linuxserver/heimdall
+    restart: always
+    privileged: true
+    networks:
+      - proxy-net
+      - devops-net
+      - weave-net
+    ports:
+      - "3443:443"
+      - "3081:80"
+    volumes:
+      - heimdall:/config
+    labels:
+      com.centurylinklabs.watchtower.enable: true

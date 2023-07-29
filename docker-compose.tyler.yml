@@ -1,0 +1,90 @@
+version: "3.9"
+
+################
+##  NETWORKS  ##
+################
+networks:
+  tyler-net:
+    driver: bridge
+
+  weave-net:
+    external: true
+
+  proxy-net:
+    external: true
+
+
+###############
+##  Volumes  ##
+###############
+volumes:
+  mysql_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/iconiclast-art/mysql
+      o: bind
+
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/iconiclast-art
+      o: bind
+
+
+services:
+  #########################
+  ##  Tyler's WordPress  ##
+  #########################
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    networks:
+      - tyler-net
+      - weave-net
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    networks:
+      - tyler-net
+      - weave-net
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - '8183:80'
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  iconiclastart:
+    image: wordpress:latest
+    restart: always
+    networks:
+      - tyler-net
+      - weave-net
+      - proxy-net
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress:/var/www/html
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+    deploy:
+      replicas: 3
