@@ -205,23 +205,21 @@ services:
     image: docker.elastic.co/beats/elastic-agent:${ELK_VERSION}
     restart: always
     environment:
-      ## Fleet
-      FLEET_ENROLL: "1"
-      FLEET_SERVER_POLICY_ID: "fleet-server-policy"
       FLEET_SERVER_ENABLE: "1"
-      KIBANA_FLEET_SETUP: "1"
-      KIBANA_HOST: https://kibana:5601
-      FLEET_URL: https://fleet-server:8220
-      FLEET_SERVER_ELASTICSEARCH_HOST: https://elasticsearch:9200
-      FLEET_CA: /etc/pki/tls/certs/ca.crt
-      KIBANA_FLEET_USERNAME: ${ELASTIC_USERNAME}
-      KIBANA_FLEET_PASSWORD: ${ELASTIC_PASSWORD}
+      FLEET_SERVER_ELASTICSEARCH_HOST: "https://elasticsearch:9200"
+      FLEET_SERVER_ELASTICSEARCH_USERNAME: ${ELASTIC_USERNAME}
+      FLEET_SERVER_ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+      FLEET_SERVER_ELASTICSEARCH_CA: /etc/pki/tls/certs/ca.crt
       FLEET_SERVER_CERT: /etc/pki/tls/certs/fleet-server.pem
       FLEET_SERVER_CERT_KEY: /etc/pki/tls/private/fleet-server-key.pem
-      FLEET_SERVER_ELASTICSEARCH_CA: /etc/pki/tls/certs/ca.crt
+      FLEET_SERVER_INSECURE_HTTP: "1"
+      KIBANA_FLEET_SETUP: "1"
+      KIBANA_HOST: "https://kibana:5601"
+      KIBANA_FLEET_USERNAME: ${ELASTIC_USERNAME}
+      KIBANA_FLEET_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_FLEET_CA: /etc/pki/tls/certs/ca.crt
+      FLEET_ENROLL: "1"
       ELK_VERSION: ${ELK_VERSION}
-      PREFLIGHT_CHECK: 1
     secrets:
       - source: ca.crt
         target: /etc/pki/tls/certs/ca.crt
@@ -245,7 +243,7 @@ services:
       - elasticsearch
       - kibana
     healthcheck:
-      test: [ "CMD-SHELL", "curl -s -k https://localhost:8220/api/status | grep -q 'HEALTHY'" ]
-      retries: 300
-      interval: 1s
+      test: "curl -f https://127.0.0.1:8220/api/status | grep HEALTHY 2>&1 >/dev/null"
+      retries: 12
+      interval: 5s
 
