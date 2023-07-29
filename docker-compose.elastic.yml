@@ -5,7 +5,7 @@ version: "3.9"
 ################
 networks:
   elastic-net:
-    external: true
+    driver: bridge
 
   proxy-net:
     external: true
@@ -39,6 +39,9 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
     container_name: elasticsearch
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: true
       co.elastic.logs/module: elasticsearch
@@ -73,6 +76,9 @@ services:
     container_name: elastic-agent
     restart: always
     user: root
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: true
       co.elastic.logs/module: elastic-agent
@@ -91,6 +97,9 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
       co.elastic.logs/module: logstash
+    networks:
+      - elastic-net
+      - weave-net
     links:
       - elasticsearch:elasticsearch
       - zoo1:zoo1
@@ -125,6 +134,10 @@ services:
     container_name: kibana
     hostname: kibana"
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
+      - proxy-net
     labels:
       com.centurylinklabs.watchtower.enable: true
       co.elastic.logs/module: kibana
@@ -149,6 +162,9 @@ services:
     image: docker.elastic.co/apm/apm-server:8.9.0
     container_name: apm-server
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: true
     depends_on:
@@ -168,6 +184,9 @@ services:
   httpd:
     image: httpd:latest
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
@@ -191,6 +210,9 @@ services:
     # Need to override user so we can access the log files, and docker.sock
     user: root
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
@@ -232,6 +254,9 @@ services:
     container_name: heartbeat
     restart: always
     command: --strict.perms=false -e  # -e flag to log to stderr and disable syslog/file output
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     volumes:
@@ -258,6 +283,9 @@ services:
     hostname: metricbeat
     user: root
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
@@ -292,6 +320,9 @@ services:
     hostname: packetbeat
     user: root
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
@@ -333,6 +364,9 @@ services:
     # support for capabilities https://github.com/moby/moby/pull/38380
     pid: host
     restart: always
+    networks:
+      - elastic-net
+      - weave-net
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:

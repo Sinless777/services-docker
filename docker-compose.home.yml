@@ -89,6 +89,7 @@ services:
   db:
     image: 'jc21/mariadb-aria:latest'
     restart: always
+    container_name: nginx-proxy-db
     networks:
       - proxy-net
       - weave-net
@@ -109,6 +110,7 @@ services:
   unifi:
     image: linuxserver/unifi-controller
     restart: always
+    container_name: unifi
     networks:
       - home-net
       - weave-net
@@ -135,6 +137,7 @@ services:
 
   sinlessgames:
     image: sinless777/gateway:1.1.3
+    container_name: sinlessgames
     restart: always
     networks:
       - proxy-net
@@ -146,6 +149,7 @@ services:
 
   mobius:
     image: sinless777/mobius_gateway:latest
+    container_name: mobius
     restart: always
     networks:
       - proxy-net
