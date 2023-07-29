@@ -199,7 +199,7 @@ services:
       - source: ca.crt
         target: /ca.crt
     ports:
-      - "22:22"
+      - "2222:22"
 
   ###   BEATS   ###
 
