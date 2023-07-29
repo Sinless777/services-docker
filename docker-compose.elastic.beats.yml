@@ -4,6 +4,9 @@ secrets:
   ca.crt:
     file: ${SECRETS_DIR}/elastic_stack/secrets/certificate_authority/ca/ca.crt
 
+  elastic-stack-ca.p12:
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificate_authority/elastic-stack-ca.p12
+
   filebeat.key:
     file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/filebeat/filebeat.key
 
