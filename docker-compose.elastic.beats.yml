@@ -126,8 +126,6 @@ services:
       retries: 12
       test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5066/
 
-
-
   filebeat:
     container_name: filebeat
     hostname: filebeat

@@ -1,0 +1,52 @@
+version: "3.8"
+
+secrets:
+  ca.crt:
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificate_authority/ca/ca.crt
+
+  fleet-server.cert:
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/fleet-server/fleet-server.crt
+
+  fleet-server.key:
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/fleet-server/fleet-server.key
+
+services:
+  elastic-agent:
+    image: docker.elastic.co/beats/elastic-agent:8.9.0
+    container_name: elastic-agent
+    restart: always
+    user: root # note, synthetic browser monitors require this set to `elastic-agent`
+    environment:
+      FLEET_ENROLL: 1
+      FLEET_URL: https://0.0.0.0:8220
+
+      ##
+      ## Common Variables
+      ##
+      ELASTICSEARCH_HOST: https://192.168.86.140:9200
+      ELASTICSEARCH_USERNAME: ${ELASTIC_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      ELASTICSEARCH_CA: ${FLEET_DIR}/config/ca.crt
+      KIBANA_HOST: https://192.168.86.140:5601
+      KIBANA_USERNAME: ${ELASTIC_USERNAME}
+      KIBANA_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      KIBANA_CA: ${FLEET_DIR}/config/ca.crt
+      ##
+      ## Prepare Kibana for Fleet
+      ##
+      KIBANA_FLEET_SETUP: 1
+      KIBANA_FLEET_HOST: https://192.168.86.140:5601
+      ##
+      ## Prepare Kibana for Fleet
+      ##
+      FLEET_SERVER_ENABLE: 1
+      FLEET_SERVER_POLICY_NAME: fleet-server
+      FLEET_SERVER_SERVICE_TOKEN: AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE2OTA2NjgxMjI5NDQ6RkZZWjBiNDVRZWlQcU91LU9ETGdLUQ
+
+    secrets:
+      - source: ca.crt
+        target: ${FLEET_DIR}/config/ca.crt
+      - source: fleet-server.cert
+        target: ${FLEET_DIR}/config/fleet-server.cert
+      - source: fleet-server.key
+        target: ${FLEET_DIR}/config/fleet-server.key
