@@ -219,6 +219,8 @@ services:
       KIBANA_FLEET_USERNAME: ${ELASTIC_USERNAME}
       KIBANA_FLEET_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_FLEET_CA: /etc/pki/tls/certs/ca.crt
+      KIBANA_FLEET_CERT: /etc/pki/tls/certs/fleet-server.pem
+      KIBANA_FLEET_CERT_KEY: /etc/pki/tls/private/fleet-server-key.key
       FLEET_ENROLL: "1"
       ELK_VERSION: ${ELK_VERSION}
       ENROLL_FORCE: 1 # force re-enrollment
@@ -229,6 +231,10 @@ services:
         target: /etc/pki/tls/certs/fleet-server.pem
       - source: fleet-server.key
         target: /etc/pki/tls/private/fleet-server-key.pem
+      - source: kibana.cert
+        target: /etc/pki/tls/certs/fleet-server.pem
+      - source: kibana.key
+        target: /etc/pki/tls/private/fleet-server-key.key
     networks:
       - elastic-net
       - weave-net
