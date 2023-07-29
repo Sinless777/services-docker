@@ -2,61 +2,61 @@ version: "3.8"
 
 secrets:
   ca.crt:
-    file: /home/sinless777/services/elastic_stack/secrets/certificate_authority/ca/ca.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificate_authority/ca/ca.crt
 
   elasticsearch.keystore:
-    file: /home/sinless777/services/elastic_stack/secrets/elasticsearch.keystore
+    file: ${SECRETS_DIR}/elastic_stack/secrets/elasticsearch.keystore
 
   elastic-stack-ca.p12:
-    file: /home/sinless777/services/elastic_stack/secrets/certificate_authority/elastic-stack-ca.p12
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificate_authority/elastic-stack-ca.p12
 
   elasticsearch.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/elasticsearch/elasticsearch.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/elasticsearch/elasticsearch.key
 
   elasticsearch.cert:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/elasticsearch/elasticsearch.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/elasticsearch/elasticsearch.crt
 
   kibana.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/kibana/kibana.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/kibana/kibana.key
 
   kibana.cert:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/kibana/kibana.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/kibana/kibana.crt
 
   logstash.pkcs8.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/logstash/logstash.pkcs8.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/logstash/logstash.pkcs8.key
 
   logstash.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/logstash/logstash.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/logstash/logstash.key
 
   logstash.p12:
-    file: /home/sinless777/services/elastic_stack/secrets/keystores/logstash/logstash.p12
+    file: ${SECRETS_DIR}/elastic_stack/secrets/keystores/logstash/logstash.p12
 
   logstash.cert:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/logstash/logstash.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/logstash/logstash.crt
 
   filebeat.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/filebeat/filebeat.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/filebeat/filebeat.key
 
   filebeat.cert:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/filebeat/filebeat.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/filebeat/filebeat.crt
 
   metricbeat.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/metricbeat/metricbeat.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/metricbeat/metricbeat.key
 
   metricbeat.cert:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/metricbeat/metricbeat.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/metricbeat/metricbeat.crt
 
   packetbeat.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/packetbeat/packetbeat.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/packetbeat/packetbeat.key
 
   packetbeat.cert:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/packetbeat/packetbeat.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/packetbeat/packetbeat.crt
 
   fleet-server.cert:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/fleet-server/fleet-server.crt
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/fleet-server/fleet-server.crt
 
   fleet-server.key:
-    file: /home/sinless777/services/elastic_stack/secrets/certificates/fleet-server/fleet-server.key
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/fleet-server/fleet-server.key
 
 ################
 ##  NETWORKS  ##
@@ -85,8 +85,8 @@ services:
       bootstrap.memory_lock: "true"
       discovery.type: single-node
     volumes:
-      - /home/sinless777/services/elastic_stack/elasticsearch/config/elasticsearch.yml:${ELASTIC_DIR}/config/elasticsearch.yml:ro
-      - /home/sinless777/services/elastic_stack/elasticsearch/data:/usr/share/elasticsearch/data
+      - ${SECRETS_DIR}/elastic_stack/elasticsearch/config/elasticsearch.yml:${ELASTIC_DIR}/config/elasticsearch.yml:ro
+      - ${SECRETS_DIR}/elastic_stack/elasticsearch/data:/usr/share/elasticsearch/data
     secrets:
       - source: elasticsearch.keystore
         target: ${ELASTIC_DIR}/config/elasticsearch.keystore
@@ -123,8 +123,8 @@ services:
     image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
     restart: unless-stopped
     volumes:
-      - /home/sinless777/services/elastic_stack/kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
-      - /home/sinless777/services/elastic_stack/kibana/data:/usr/share/kibana/data
+      - ${SECRETS_DIR}/elastic_stack/kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
+      - ${SECRETS_DIR}/elastic_stack/kibana/data:/usr/share/kibana/data
     environment:
       CONFIG_DIR: ${KIBANA_DIR}/config
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
@@ -163,9 +163,9 @@ services:
     image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
     restart: unless-stopped
     volumes:
-      - /home/sinless777/services/elastic_stack/logstash/config/logstash.yml:${LOGSTASH_DIR}/config/logstash.yml:ro
-      - /home/sinless777/services/elastic_stack/logstash/pipeline/logstash.conf:${LOGSTASH_DIR}/pipeline/logstash.conf:ro
-      - /home/sinless777/services/elastic_stack/logstash/pipeline/metricbeat.conf:${LOGSTASH_DIR}/pipeline/metricbeat.conf
+      - ${SECRETS_DIR}/elastic_stack/logstash/config/logstash.yml:${LOGSTASH_DIR}/config/logstash.yml:ro
+      - ${SECRETS_DIR}/elastic_stack/logstash/pipeline/logstash.conf:${LOGSTASH_DIR}/pipeline/logstash.conf:ro
+      - ${SECRETS_DIR}/elastic_stack/logstash/pipeline/metricbeat.conf:${LOGSTASH_DIR}/pipeline/metricbeat.conf
     environment:
       CONFIG_DIR: ${LOGSTASH_DIR}/config
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
@@ -266,7 +266,7 @@ services:
       - NET_RAW
     command: packetbeat -e -strict.perms=false
     volumes:
-      - /home/sinless777/services/elastic_stack/packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
+      - ${SECRETS_DIR}/elastic_stack/packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       CONFIG_DIR: ${PACKETBEAT_DIR}/config
@@ -303,7 +303,7 @@ services:
       - NET_RAW
     command: "/bin/bash -c while true; do metricbeat -e; sleep 1; done"
     volumes:
-      - /home/sinless777/services/elastic_stack/metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
+      - ${SECRETS_DIR}/elastic_stack/metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       CONFIG_DIR: ${METRICBEAT_DIR}/config
@@ -340,7 +340,7 @@ services:
     profiles:
       - monitoring
     volumes:
-      - /home/sinless777/services/elastic_stack/filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
+      - ${SECRETS_DIR}/elastic_stack/filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
     environment:
       CONFIG_DIR: ${FILEBEAT_DIR}/config
       LS_JAVA_OPTS: "-Xmx${FILEBEAT_HEAP} -Xms${FILEBEAT_HEAP}"
