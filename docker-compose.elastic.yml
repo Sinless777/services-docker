@@ -193,7 +193,7 @@ services:
       - elasticsearch
       - kibana
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9600"]
+      test: curl -s https://logstash:9600 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
       timeout: 10s
       retries: 5
@@ -231,11 +231,6 @@ services:
     links:
       - elasticsearch
       - kibana
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2222"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   ###   BEATS   ###
 
