@@ -58,6 +58,7 @@ services:
   ###   WATCHTOWER   ###
   watchtower:
     image: containrrr/watchtower
+    container_name: watchtower
     restart: always
     networks:
       - weave-net
