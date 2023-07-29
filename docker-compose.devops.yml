@@ -23,7 +23,7 @@ volumes:
 ################
 networks:
   devops-net:
-    driver: bridge
+    external: true
 
   proxy-net:
     external: true

@@ -1,0 +1,110 @@
+version: "3.9"
+
+################
+##  Networks  ##
+################
+networks:
+  home-net:
+    driver: bridge
+
+  weave-net:
+    driver: bridge
+
+  proxy-net:
+    driver: bridge
+
+  elastic-net:
+    driver: bridge
+
+  tyler-net:
+    driver: bridge
+
+  kafka-net:
+    driver: bridge
+
+  helix-ai-net:
+    driver: bridge
+
+  devops-net:
+    driver: bridge
+
+###############
+##  Volumes  ##
+###############
+
+volumes:
+  portainer_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/portainer
+      o: bind
+
+services:
+  portainer:
+    image: portainer/portainer-ee:latest
+    container_name: portainer
+    networks:
+      - weave-net
+      - proxy-net
+      - home-net
+      - bridge
+      - host
+      - default
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8000:8000
+      - 9000:9000
+      - 9443:9443
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  ###################
+  ##   WEAVE_NET   ##
+  ###################
+
+  ###   WATCHTOWER   ###
+  watchtower:
+    image: containrrr/watchtower
+    restart: always
+    networks:
+      - weave-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      WATCHTOWER_CLEANUP: true
+      WATCHTOWER_LABEL_ENABLE: true
+      WATCHTOWER_INCLUDE_RESTARTING: true
+      WATCHTOWER_SCHEDULE: '0 0 6 * * *'
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+
+  ###   WEAVESCOPE   ###
+  weavescope:
+    image: weaveworks/scope:latest
+    container_name: weavescope
+    hostname: weavescope
+    pid: "host"
+    privileged: true
+    restart: always
+    networks:
+      - weave-net
+    ports:
+      - "4040:4040"
+    labels:
+      works.weave.role: system
+      com.centurylinklabs.watchtower.enable: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    command:
+      - "--probe.docker=true"
+      - "--weave=false"
+

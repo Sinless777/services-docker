@@ -4,8 +4,8 @@ version: "3.9"
 ##  NETWORKS  ##
 ################
 networks:
-  helix-ai:
-    driver: bridge
+  helix-ai-net:
+    external: true
 
   proxy-net:
     external: true
