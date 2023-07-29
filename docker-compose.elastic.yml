@@ -109,7 +109,7 @@ services:
       test: ["CMD", "nc", "-z", "localhost", "9200"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 5000
 
   kibana:
     container_name: kibana
