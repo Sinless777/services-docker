@@ -1,10 +1,10 @@
 ## Cluster Settings
-cluster.name: "elk-tls-cluster"
+cluster.name: "Sinless-elk-cluster"
 network.host: "0.0.0.0"
 http.host: 0.0.0.0
 
 ## License
-xpack.license.self_generated.type: trial
+xpack.license.self_generated.type: base
 
 # Security
 xpack.security.enabled: true

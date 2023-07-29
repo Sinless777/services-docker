@@ -105,6 +105,11 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9200"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   kibana:
     container_name: kibana
@@ -136,7 +141,13 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5601"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   logstash:
     container_name: logstash
@@ -175,8 +186,15 @@ services:
       - 5000/tcp
       - 5000/udp
     depends_on:
-      - elasticsearch
-      - kibana
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9600"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   elastic-agent:
     container_name: elastic-agent
@@ -198,8 +216,23 @@ services:
     secrets:
       - source: ca.crt
         target: /ca.crt
+    networks:
+      - elastic-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     ports:
       - "2222:22"
+    depends_on:
+      kibana:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2222"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   ###   BEATS   ###
 
@@ -234,7 +267,8 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     depends_on:
-      - logstash
+      logstash:
+        condition: service_healthy
 
   metricbeat:
     container_name: metricbeat
@@ -269,7 +303,8 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     depends_on:
-      - logstash
+      logstash:
+        condition: service_healthy
 
   filebeat:
     container_name: filebeat
@@ -297,4 +332,5 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     depends_on:
-      - logstash
+      logstash:
+        condition: service_healthy
