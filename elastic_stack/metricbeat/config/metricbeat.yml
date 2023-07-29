@@ -8,7 +8,7 @@ setup.kibana.protocol: "https"
 setup.kibana.ssl.enabled: true
 setup.kibana.username: '${ELASTIC_USERNAME:}'
 setup.kibana.password: '${ELASTIC_PASSWORD:}'
-setup.kibana.ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
+setup.kibana.ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
 setup.kibana.ssl.certificate: ${CONFIG_DIR}/metricbeat.crt
 setup.kibana.ssl.key: ${CONFIG_DIR}/metricbeat.key
 setup.kibana.ssl.verification_mode: "none"
@@ -39,7 +39,7 @@ processors:
 
 output.logstash:
   hosts: ["logstash:5044"]
-  ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
+  ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
   ssl.certificate: ${CONFIG_DIR}/metricbeat.crt
   ssl.key: ${CONFIG_DIR}/metricbeat.key
   index: metricbeat
