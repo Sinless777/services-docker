@@ -106,10 +106,10 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     healthcheck:
-      test: curl --cacert ${ELASTIC_DIR}/config/ca.crt --max-time 120 --retry 120 --retry-delay 1 --show-error --silent https://${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}@localhost:9200
-
-      retries: 300
-      interval: 1s
+      test: curl -s https://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   kibana:
     container_name: kibana
@@ -121,8 +121,8 @@ services:
       - /home/sinless777/services/elastic-stack/kibana/data:/usr/share/kibana/data
     environment:
       CONFIG_DIR: ${KIBANA_DIR}/config
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_USERNAME: ${KIBANA_USERNAME}
+      ELASTIC_PASSWORD: ${KIBANA_PASSWORD}
       ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
       KIBANA_URL: ${KIBANA_URL}
     secrets:
