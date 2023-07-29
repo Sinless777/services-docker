@@ -29,6 +29,7 @@ fabric.properties
 .idea/httpRequests
 .idea/caches/build_file_checksums.ser
 .idea/*.xml
+/.idea/*.iml
 
 .env
 /elastic_stack/secrets/certificate_authority/
@@ -37,4 +38,4 @@ fabric.properties
 /elastic_stack/secrets/bundle.zip
 /elastic_stack/secrets/cert_keystores.zip
 /elastic_stack/secrets/elasticsearch.keystore
-/.idea/services-docker.iml
+
