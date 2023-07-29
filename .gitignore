@@ -39,4 +39,4 @@ fabric.properties
 /elastic_stack/secrets/cert_keystores.zip
 /elastic_stack/secrets/elasticsearch.keystore
 
-/running/
+/running/*
