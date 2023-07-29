@@ -31,9 +31,9 @@ fabric.properties
 .idea/*.xml
 
 .env
-/secrets/certificate_authority/
-/secrets/certificates/
-/secrets/keystores/
-/secrets/bundle.zip
-/secrets/cert_keystores.zip
-/secrets/elasticsearch.keystore
+/elastic_stack/secrets/certificate_authority/
+/elastic_stack/secrets/certificates/
+/elastic_stack/secrets/keystores/
+/elastic_stack/secrets/bundle.zip
+/elastic_stack/secrets/cert_keystores.zip
+/elastic_stack/secrets/elasticsearch.keystore
