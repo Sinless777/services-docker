@@ -11,7 +11,7 @@ networks:
     external: true
 
   proxy-net:
-    external: true
+    driver: bridge
 
 services:
   ##########################################
