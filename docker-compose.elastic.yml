@@ -106,10 +106,9 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     healthcheck:
-      test: [ "CMD-SHELL", "curl --cacert ${ELASTIC_DIR}/config/ca.crt --silent --fail localhost:9200/_cluster/health || exit 1" ]
-      interval: 30s
-      timeout: 30s
-      retries: 3
+      test: [ "CMD-SHELL", "curl -u ${ELASTIC_USERNAME}:${ELASTIC_PASSWORD} -s http://localhost:9200/_cat/health?h=status | grep -q green" ]
+      retries: 300
+      interval: 1s
 
   kibana:
     container_name: kibana
