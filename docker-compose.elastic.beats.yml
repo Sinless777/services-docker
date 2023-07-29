@@ -30,6 +30,7 @@ secrets:
 ################
 networks:
   elastic-net:
+    name: elastic-net
     external: true
 
   proxy-net:

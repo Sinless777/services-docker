@@ -45,6 +45,7 @@ secrets:
 ################
 networks:
   elastic-net:
+    name: elastic-net
     driver: bridge
 
   proxy-net:
