@@ -59,6 +59,8 @@ services:
     networks:
       - tyler-net
       - weave-net
+    links:
+      - mysql
     depends_on:
       - mysql
     environment:
