@@ -79,7 +79,6 @@ services:
       bootstrap.memory_lock: "true"
       discovery.type: single-node
     volumes:
-      - /home/sinless777/services/elastic-stack/elasticsearch:/usr/share/elasticsearch
       - /home/sinless777/services/elastic-stack/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - /home/sinless777/services/elastic-stack/elasticsearch/data:/usr/share/elasticsearch/data
     secrets:
