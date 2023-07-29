@@ -144,7 +144,7 @@ services:
     deploy:
       replicas: 3
     healthcheck:
-      test: [ "CMD", "curl", "-f", "https://sinlessgamesllc.com" ]
+      test: "curl -f https://sinlessgames.com"
       interval: 10s
       timeout: 10s
       retries: 5
@@ -160,7 +160,7 @@ services:
     deploy:
       replicas: 3
     healthcheck:
-      test: [ "CMD", "curl", "-f", "https://mobiusinferniummc.com" ]
+      test: "curl -f https://mobiusinferniummc.com"
       interval: 10s
       timeout: 10s
       retries: 5
