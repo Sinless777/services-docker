@@ -250,7 +250,7 @@ services:
       interval: 1s
 
   apm:
-    image: docker.elastic.co/beats/elastic-agent:${ELASTIC__STACK_VERSION}
+    image: docker.elastic.co/beats/elastic-agent:${ELK_VERSION}
     restart: unless-stopped
     labels:
       co.elastic.logs/enabled: false
@@ -278,11 +278,11 @@ services:
     container_name: apm
     hostname: apm
     ports:
-      - 8200:8200
+      - 8221:8200
     networks:
       - elastic-net
       - weave-net
     healthcheck:
       interval: 10s
       retries: 12
-      test: curl -s http://localhost:8200 | grep -q '"publish_ready":\ true'
+      test: curl -s http://localhost:8221 | grep -q '"publish_ready":\ true'
