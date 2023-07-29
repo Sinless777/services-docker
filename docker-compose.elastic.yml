@@ -310,9 +310,9 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     depends_on:
-      elasticsearch: { condition: service_healthy }
-      fleet-server: { condition: service_healthy }
-      logstash: { condition: service_healthy }
+      - logstash
+      - elasticsearch
+      - fleet-server
     links:
       - logstash
 
