@@ -109,7 +109,7 @@ services:
       - zookeeper-0:zookeeper-0
     depends_on:
       - elasticsearch
-      - zoo1
+      - zookeeper-0:zookeeper-0
     environment:
       - xpack.monitoring.enabled=false
       - "LS_HEAP_SIZE=-Xms512m -Xmx512m"
