@@ -40,6 +40,7 @@ networks:
     external: true
 
 services:
+
   packetbeat:
     container_name: packetbeat
     hostname: packetbeat
@@ -62,9 +63,9 @@ services:
       - source: ca.crt
         target: /etc/pki/ca-trust/source/anchors/ca.crt
       - source: packetbeat.cert
-        target: ${PACKETBEAT_DIR}/config/packetbeat.cert
+        target: /usr/share/packetbeat/config/packetbeat.cert
       - source: packetbeat.key
-        target: ${PACKETBEAT_DIR}/config/packetbeat.key
+        target: /usr/share/packetbeat/config/packetbeat.key
     networks:
       - elastic-net
       - weave-net
