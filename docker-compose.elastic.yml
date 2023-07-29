@@ -52,6 +52,12 @@ secrets:
   packetbeat.cert:
     file: /home/sinless777/services/elastic_stack/secrets/certificates/packetbeat/packetbeat.crt
 
+  fleet-server.cert:
+    file: /home/sinless777/services/elastic_stack/secrets/certificates/fleet-server/fleet-server.crt
+
+  fleet-server.key:
+    file: /home/sinless777/services/elastic_stack/secrets/certificates/fleet-server/fleet-server.key
+
 ################
 ##  NETWORKS  ##
 ################
@@ -125,6 +131,7 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
       KIBANA_URL: ${KIBANA_URL}
+      XPACK_FLEET_AGENTS_FLEET_SERVER_HOSTS: '["https://fleet-server:8220"]'
     secrets:
       - source: ca.crt
         target: ${KIBANA_DIR}/config/ca.crt
@@ -199,10 +206,10 @@ services:
       retries: 5
 
   fleet-server:
-    container_name: elastic-agent
+    container_name: fleet-server
     hostname: fleet-server
     image: docker.elastic.co/beats/elastic-agent:${ELK_VERSION}
-    restart: unless-stopped
+    restart: always
     environment:
       ## Fleet
       FLEET_SERVER_ENABLE: "1"
@@ -221,14 +228,18 @@ services:
       PREFLIGHT_CHECK: 1
     secrets:
       - source: ca.crt
-        target: /ca.crt
+        target: /etc/pki/tls/certs/ca.crt
+      - source: fleet-server.cert
+        target: /etc/pki/tls/certs/fleet-server.pem
+      - source: fleet-server.key
+        target: /etc/pki/tls/private/fleet-server-key.pem
     networks:
       - elastic-net
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     ports:
-      - "2222:22"
+      - 8220:8220
     depends_on:
       elasticsearch: { condition: service_healthy }
       kibana: { condition: service_healthy }
@@ -248,6 +259,8 @@ services:
     user: root
     image: docker.elastic.co/beats/packetbeat:${ELK_VERSION}
     restart: unless-stopped
+    profiles:
+      - monitoring
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -283,6 +296,8 @@ services:
     user: root
     image: docker.elastic.co/beats/metricbeat:${ELK_VERSION}
     restart: unless-stopped
+    profiles:
+      - monitoring
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -322,6 +337,8 @@ services:
     image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
     restart: unless-stopped
     command: filebeat -e -strict.perms=false
+    profiles:
+      - monitoring
     volumes:
       - /home/sinless777/services/elastic_stack/filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
     environment:

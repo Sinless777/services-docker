@@ -41,3 +41,10 @@ instances:
     ip:
       - "0.0.0.0"
       - "127.0.0.1"
+  - name: fleet-server
+    dns:
+      - fleet-server
+      - localhost
+    ip:
+      - "0.0.0.0"
+      - "127.0.0.1"

@@ -31,6 +31,7 @@ xpack.fleet.agents.enabled: true
 xpack.fleet.agents.tlsCheckDisabled: true
 xpack.fleet.agents.kibana.host: "https://kibana:5601"
 xpack.fleet.agents.elasticsearch.host: "https://elasticsearch:9200"
+xpack.fleet.agents.logstash.host: "logstash:5044"
 
 xpack.ingestManager.enabled: true
 xpack.ingestManager.fleet.enabled: true
