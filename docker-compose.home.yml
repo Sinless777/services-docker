@@ -24,6 +24,7 @@ services:
     networks:
       - home-net
       - proxy-net
+      - weave-net
     ports:
       # These ports are in format <host-port>:<container-port>
       - '80:80' # Public HTTP Port
@@ -53,6 +54,7 @@ services:
     restart: always
     networks:
       - proxy-net
+      - weave-net
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
@@ -89,6 +91,42 @@ services:
       - "8443:8443"
     labels:
       com.centurylinklabs.watchtower.enable: true
+
+  ################
+  ##  Websites  ##
+  ################
+
+  sinlessgames:
+    image: sinless777/gateway:1.1.3
+    restart: always
+    networks:
+      - proxy-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+    deploy:
+      replicas: 3
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "https://sinlessgamesllc.com" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  mobius:
+    image: sinless777/mobius_gateway:latest
+    restart: always
+    networks:
+      - proxy-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+    deploy:
+      replicas: 3
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "https://mobiusinferniummc.com" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 ###############
 ##  Volumes  ##
