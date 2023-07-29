@@ -48,9 +48,6 @@ services:
       - weave-net
       - proxy-net
       - home-net
-      - bridge
-      - host
-      - default
     volumes:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
