@@ -121,7 +121,7 @@ services:
       - /home/sinless777/services/elastic-stack/kibana/data:/usr/share/kibana/data
     environment:
       CONFIG_DIR: ${KIBANA_DIR}/config
-      ELASTIC_USERNAME: ${KIBANA_USERNAME}
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${KIBANA_PASSWORD}
       ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
       KIBANA_URL: ${KIBANA_URL}
