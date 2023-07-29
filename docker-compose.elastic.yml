@@ -214,7 +214,7 @@ services:
       ## Fleet
       FLEET_SERVER_ENABLE: "1"
       FLEET_SERVER_POLICY_ID: "fleet-server-apm"
-      FLEET_SERVER_ELASTICSEARCH_HOST: http://elasticsearch:9200
+      FLEET_SERVER_ELASTICSEARCH_HOST: https://elasticsearch:9200
       FLEET_SERVER_ELASTICSEARCH_USERNAME: "${ELASTIC_USERNAME}"
       FLEET_SERVER_ELASTICSEARCH_PASSWORD: "${ELASTIC_PASSWORD}"
       FLEET_SERVER_CERT: /etc/pki/tls/certs/fleet-server.pem
