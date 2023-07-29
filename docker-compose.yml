@@ -11,7 +11,7 @@ networks:
     driver: bridge
 
   proxy-net:
-    driver: bridge
+    external: true
 
   elastic-net:
     driver: bridge

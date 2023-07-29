@@ -21,6 +21,7 @@ services:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: always
     networks:
+      - home-net
       - proxy-net
     ports:
       # These ports are in format <host-port>:<container-port>
