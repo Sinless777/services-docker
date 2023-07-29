@@ -241,8 +241,8 @@ services:
     ports:
       - 8220:8220
     depends_on:
-      elasticsearch: { condition: service_healthy }
-      kibana: { condition: service_healthy }
+      - elasticsearch
+      - kibana
     links:
       - elasticsearch
       - kibana
