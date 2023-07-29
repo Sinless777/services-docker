@@ -32,6 +32,7 @@ services:
   portainer:
     image: portainer/portainer-ee:latest
     container_name: portainer
+    command: --admin-password 'CGg}#3rUWa-@QvBypyUEE5Mzn-@U=bfGRCPR1Y%p'
     networks:
       - weave-net
       - proxy-net
@@ -50,6 +51,39 @@ services:
       - TZ=America/Denver
     labels:
       com.centurylinklabs.watchtower.enable: true
+    deploy:
+      labels:
+        - portainer_service
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.role == manager, node.labels.cicdBuildsOnly != true ]
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: any
+
+  agent:
+    image: portainer/agent
+    environment:
+      # REQUIRED: Should be equal to the service name prefixed by "tasks." when
+      # deployed inside an overlay network
+      AGENT_CLUSTER_ADDR: tasks.agent
+      # AGENT_PORT: 9001
+      # LOG_LEVEL: debug
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - weave-net
+      - proxy-net
+      - home-net
+    labels:
+      com.centurylinklabs.watchtower.enable: true
+    deploy:
+      mode: global
+      placement:
+        constraints: [ node.platform.os == linux ]
 
   ###################
   ##   WEAVE_NET   ##
