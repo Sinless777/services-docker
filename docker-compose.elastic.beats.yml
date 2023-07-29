@@ -68,10 +68,6 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
-    depends_on:
-      - logstash
-    links:
-      - logstash
 
   metricbeat:
     container_name: metricbeat
@@ -107,12 +103,6 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
-    depends_on:
-      - logstash
-      - elasticsearch
-      - fleet-server
-    links:
-      - logstash
 
   filebeat:
     container_name: filebeat
@@ -141,7 +131,3 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
-    depends_on:
-      - logstash
-    links:
-      - logstash
