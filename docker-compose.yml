@@ -10,9 +10,6 @@ networks:
   weave-net:
     driver: bridge
 
-  proxy-net:
-    external: true
-
   elastic-net:
     driver: bridge
 
