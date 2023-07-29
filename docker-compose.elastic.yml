@@ -1,5 +1,57 @@
 version: "3.8"
 
+secrets:
+  ca.crt:
+    file: /home/sinless777/services/elastic-stack/secrets/certificate_authority/ca/ca.crt
+
+  elasticsearch.keystore:
+    file: /home/sinless777/services/elastic-stack/secrets/elasticsearch.keystore
+
+  elastic-stack-ca.p12:
+    file: /home/sinless777/services/elastic-stack/secrets/certificate_authority/elastic-stack-ca.p12
+
+  elasticsearch.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/elasticsearch/elasticsearch.key
+
+  elasticsearch.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/elasticsearch/elasticsearch.crt
+
+  kibana.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/kibana/kibana.key
+
+  kibana.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/kibana/kibana.crt
+
+  logstash.pkcs8.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/logstash/logstash.pkcs8.key
+
+  logstash.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/logstash/logstash.key
+
+  logstash.p12:
+    file: /home/sinless777/services/elastic-stack/secrets/keystores/logstash/logstash.p12
+
+  logstash.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/logstash/logstash.crt
+
+  filebeat.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/filebeat/filebeat.key
+
+  filebeat.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/filebeat/filebeat.crt
+
+  metricbeat.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/metricbeat/metricbeat.key
+
+  metricbeat.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/metricbeat/metricbeat.crt
+
+  packetbeat.key:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/packetbeat/packetbeat.key
+
+  packetbeat.cert:
+    file: /home/sinless777/services/elastic-stack/secrets/certificates/packetbeat/packetbeat.crt
+
 ###############
 ##  Volumes  ##
 ###############
@@ -31,192 +83,262 @@ networks:
   weave-net:
     external: true
 
-  kafka-net:
-    external: true
-
 services:
-  setup:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
-    container_name: elasticsearch-security-setup
-    networks:
-      - elastic-net
-      - weave-net
-    labels:
-      com.centurylinklabs.watchtower.enable: true
-    volumes:
-      - /home/sinless777/services/elastic-stack/certs:/usr/share/elasticsearch/config/certs:z
-    user: "0"
-    command: >
-      bash -c '
-        if [ x${ELASTIC_PASSWORD} == x ]; then
-          echo "Set the ELASTIC_PASSWORD environment variable in the .env file";
-          exit 1;
-        elif [ x${KIBANA_PASSWORD} == x ]; then
-          echo "Set the KIBANA_PASSWORD environment variable in the .env file";
-          exit 1;
-        fi;
-        if [ ! -f certs/ca.zip ]; then
-          echo "Creating CA";
-          bin/elasticsearch-certutil ca --silent --pem -out config/certs/ca.zip;
-          unzip config/certs/ca.zip -d config/certs;
-        fi;
-        if [ ! -f certs/certs.zip ]; then
-          echo "Creating certs";
-          echo -ne \
-          "instances:\n"\
-          "  - name: elasticsearch\n"\
-          "    dns:\n"\
-          "      - ecp-elasticsearch\n"\
-          "      - localhost\n"\
-          "    ip:\n"\
-          "      - 127.0.0.1\n"\
-          "  - name: kibana\n"\
-          "    dns:\n"\
-          "      - ecp-kibana\n"\
-          "      - localhost\n"\
-          "    ip:\n"\
-          "      - 127.0.0.1\n"\
-          "  - name: fleet-server\n"\
-          "    dns:\n"\
-          "      - ecp-fleet-server\n"\
-          "      - localhost\n"\
-          "    ip:\n"\
-          "      - 127.0.0.1\n"\
-          > config/certs/instances.yml;
-          bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
-          unzip config/certs/certs.zip -d config/certs;
-          cat config/certs/elasticsearch/elasticsearch.crt config/certs/ca/ca.crt > config/certs/elasticsearch/elasticsearch.chain.pem
-        fi;
-        echo "Setting file permissions"
-        chown -R root:root config/certs;
-        find . -type d -exec chmod 750 \{\} \;;
-        find . -type f -exec chmod 640 \{\} \;;
-        echo "Waiting for Elasticsearch availability";
-        until curl -s --cacert config/certs/ca/ca.crt https://ecp-elasticsearch:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
-        echo "Setting kibana_system password";
-        until curl -s -X POST --cacert config/certs/ca/ca.crt -u elastic:${ELASTIC_PASSWORD} -H "Content-Type: application/json" https://ecp-elasticsearch:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
-        echo "All done!";
-      '
-    healthcheck:
-      test: ["CMD-SHELL", "[ -f config/certs/elasticsearch/elasticsearch.crt ]"]
-      interval: 1s
-      timeout: 5s
-      retries: 120
-
   elasticsearch:
-    depends_on:
-      setup:
-        condition: service_healthy
-    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     container_name: elasticsearch
-    networks:
-      - elastic-net
-      - weave-net
-    labels:
-      com.centurylinklabs.watchtower.enable: true
-    volumes:
-      - /home/sinless777/services/elastic-stack/certs:/usr/share/elasticsearch/config/certs
-      - esdata01:/usr/share/elasticsearch/data
-    ports:
-      - ${ES_PORT}:9200
+    hostname: elasticsearch
+    build:
+      context: elastic/elasticsearch/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    restart: unless-stopped
     environment:
-      - node.name=ecp-elasticsearch
-      - cluster.name=${CLUSTER_NAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=certs/elasticsearch/elasticsearch.key
-      - xpack.security.http.ssl.certificate=certs/elasticsearch/elasticsearch.chain.pem
-      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
-      - xpack.security.http.ssl.verification_mode=certificate
-      - xpack.security.http.ssl.client_authentication=optional
-      - xpack.security.transport.ssl.enabled=true
-      - xpack.security.transport.ssl.key=certs/elasticsearch/elasticsearch.key
-      - xpack.security.transport.ssl.certificate=certs/elasticsearch/elasticsearch.crt
-      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
-      - xpack.security.transport.ssl.verification_mode=certificate
-      - xpack.security.transport.ssl.client_authentication=optional
-      - xpack.license.self_generated.type=${LICENSE}
+      CONFIG_DIR: ${ELASTIC_DIR}/config
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ES_JAVA_OPTS: -Xmx${ELASTICSEARCH_HEAP} -Xms${ELASTICSEARCH_HEAP}
+      bootstrap.memory_lock: "true"
+      discovery.type: single-node
+    volumes:
+      - data:${ELASTIC_DIR}
+      - ./elasticsearch/config/elasticsearch.yml:${ELASTIC_DIR}/config/elasticsearch.yml:ro
+    secrets:
+      - source: elasticsearch.keystore
+        target: ${ELASTIC_DIR}/config/elasticsearch.keystore
+      - source: ca.crt
+        target: ${ELASTIC_DIR}/config/ca.crt
+      - source: elasticsearch.cert
+        target: ${ELASTIC_DIR}/config/elasticsearch.crt
+      - source: elasticsearch.key
+        target: ${ELASTIC_DIR}/config/elasticsearch.key
+    expose:
+      - 9200
+      - 9300
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
-
-  kibana:
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
-    container_name: ecp-kibana
+      nofile:
+        soft: 200000
+        hard: 200000
     networks:
       - elastic-net
-      - proxy-net
       - weave-net
     labels:
-      com.centurylinklabs.watchtower.enable: true
-    volumes:
-      - /home/sinless777/services/elastic-stack/certs:/usr/share/kibana/config/certs:z
-      - kibanadata:/usr/share/kibana/data
-      - ./kibana.yml:/usr/share/kibana/config/kibana.yml:Z
-    ports:
-      - ${KIBANA_PORT}:5601
-    environment:
-      - SERVER_NAME=ecp-kibana
-      - ELASTICSEARCH_HOSTS=https://ecp-elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
-      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
-      - SERVER_SSL_ENABLED=true
-      - SERVER_SSL_CERTIFICATE=config/certs/kibana/kibana.crt
-      - SERVER_SSL_KEY=config/certs/kibana/kibana.key
-      - SERVER_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -I -s --cacert config/certs/ca/ca.crt https://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+      com.centurylinklabs.watchtower.enable: "true"
 
-  fleet-server:
-    depends_on:
-      kibana:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-    image: docker.elastic.co/beats/elastic-agent:${STACK_VERSION}
-    container_name: ecp-fleet-server
+  kibana:
+    container_name: kibana
+    hostname: kibana
+    build:
+      context: elastic/kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
     volumes:
-      - /home/sinless777/services/elastic-stack/certs:/certs:z
-    ports:
-      - ${FLEET_PORT}:8220
-    restart: always
-    user: root
+      - ./kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
     environment:
-      - FLEET_ENROLL=1
-      - FLEET_SERVER_POLICY_ID=fleet-server-policy
-      - FLEET_SERVER_ENABLE=1
-      - KIBANA_FLEET_SETUP=1
-      - KIBANA_HOST=https://ecp-kibana:5601
-      - FLEET_URL=https://ecp-fleet-server:8220
-      - FLEET_SERVER_ELASTICSEARCH_HOST=https://ecp-elasticsearch:9200
-      - FLEET_CA=/certs/ca/ca.crt
-      - KIBANA_FLEET_USERNAME=elastic
-      - KIBANA_FLEET_PASSWORD=${ELASTIC_PASSWORD}
-      - FLEET_SERVER_CERT=/certs/fleet-server/fleet-server.crt
-      - FLEET_SERVER_CERT_KEY=/certs/fleet-server/fleet-server.key
-      - FLEET_SERVER_ELASTICSEARCH_CA=/certs/ca/ca.crt
-      - KIBANA_FLEET_CA=/certs/ca/ca.crt
+      CONFIG_DIR: ${KIBANA_DIR}/config
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
+      KIBANA_URL: ${KIBANA_URL}
+    secrets:
+      - source: ca.crt
+        target: ${KIBANA_DIR}/config/ca.crt
+      - source: kibana.cert
+        target: ${KIBANA_DIR}/config/kibana.crt
+      - source: kibana.key
+        target: ${KIBANA_DIR}/config/kibana.key
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic-net
+      - weave-net
+      - proxy-net
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    container_name: logstash
+    hostname: logstash
+    build:
+      context: elastic/logstash/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
+    volumes:
+      - ./logstash/config/logstash.yml:${LOGSTASH_DIR}/config/logstash.yml:ro
+      - ./logstash/pipeline/logstash.conf:${LOGSTASH_DIR}/pipeline/logstash.conf:ro
+      - ./logstash/pipeline/metricbeat.conf:${LOGSTASH_DIR}/pipeline/metricbeat.conf
+    environment:
+      CONFIG_DIR: ${LOGSTASH_DIR}/config
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      LS_JAVA_OPTS: "-Xmx${LOGSTASH_HEAP} -Xms${LOGSTASH_HEAP}"
+    secrets:
+      - source: ca.crt
+        target: ${LOGSTASH_DIR}/config/ca.crt
+      - source: logstash.cert
+        target: ${LOGSTASH_DIR}/config/logstash.crt
+      - source: logstash.key
+        target: ${LOGSTASH_DIR}/config/logstash.key
+      - source: logstash.pkcs8.key
+        target: ${LOGSTASH_DIR}/config/logstash.pkcs8.key
+      - source: logstash.p12
+        target: ${LOGSTASH_DIR}/config/logstash.p12
+    networks:
+      - elastic-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    expose:
+      - 12201/udp
+      - 5044
+      - 9600
+      - 5000/tcp
+      - 5000/udp
+    depends_on:
+      - elasticsearch
+      - kibana
+
+  elastic-agent:
+    container_name: elastic-agent
+    hostname: elastic-agent
+    build:
+      context: elastic/elastic-agent/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
+    environment:
+      FLEET_CA: '/ca.crt'
+      ELK_VERSION: ${ELK_VERSION}
+      KIBANA_HOST: "https://kibana:5601"
+      ELASTICSEARCH_USERNAME: ${ELASTIC_USERNAME}
+      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOSTS: "https://elasticsearch:9200"
+      FLEET_ENROLL_INSECURE: 1
+      ENROLL_FORCE: 1
+      PREFLIGHT_CHECK: 1
+    secrets:
+      - source: ca.crt
+        target: /ca.crt
+    ports:
+      - "22:22"
+    networks:
+      - elastic-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      - logstash
+
+  packetbeat:
+    container_name: packetbeat
+    hostname: packetbeat
+    user: root
+    build:
+      context: elastic/packetbeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command: packetbeat -e -strict.perms=false
+    volumes:
+      - ./packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONFIG_DIR: ${PACKETBEAT_DIR}/config
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      LS_JAVA_OPTS: "-Xmx${PACKETBEAT_HEAP} -Xms${PACKETBEAT_HEAP}"
+    secrets:
+      - source: ca.crt
+        target: ${PACKETBEAT_DIR}/config/ca.crt
+      - source: packetbeat.cert
+        target: ${PACKETBEAT_DIR}/config/packetbeat.crt
+      - source: packetbeat.key
+        target: ${PACKETBEAT_DIR}/config/packetbeat.key
+    networks:
+      - elastic-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      - logstash
+
+  metricbeat:
+    container_name: metricbeat
+    hostname: metricbeat
+    user: root
+    build:
+      context: elastic/metricbeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command:
+      - /bin/bash
+      - -c
+      - while true; do metricbeat -e; sleep 1; done
+    volumes:
+      - ./metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONFIG_DIR: ${METRICBEAT_DIR}/config
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      LS_JAVA_OPTS: "-Xmx${METRICBEAT_HEAP} -Xms${METRICBEAT_HEAP}"
+    secrets:
+      - source: elastic-stack-ca.p12
+        target: /etc/pki/ca-trust/source/anchors/elastic-stack-ca.p12
+      - source: ca.crt
+        target: /etc/pki/ca-trust/source/anchors/ca.crt
+      - source: metricbeat.cert
+        target: ${METRICBEAT_DIR}/config/metricbeat.crt
+      - source: metricbeat.key
+        target: ${METRICBEAT_DIR}/config/metricbeat.key
+    networks:
+      - elastic-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      - logstash
+
+  filebeat:
+    container_name: filebeat
+    hostname: filebeat
+    build:
+      context: elastic/filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    restart: unless-stopped
+    command: filebeat -e -strict.perms=false
+    volumes:
+      - ./filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
+    environment:
+      CONFIG_DIR: ${FILEBEAT_DIR}/config
+      LS_JAVA_OPTS: "-Xmx${FILEBEAT_HEAP} -Xms${FILEBEAT_HEAP}"
+    secrets:
+      - source: ca.crt
+        target: ${FILEBEAT_DIR}/config/ca.crt
+      - source: filebeat.cert
+        target: ${FILEBEAT_DIR}/config/filebeat.crt
+      - source: filebeat.key
+        target: ${FILEBEAT_DIR}/config/filebeat.key
+    expose:
+      - 9000
+    networks:
+      - elastic-net
+      - weave-net
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      - logstash
