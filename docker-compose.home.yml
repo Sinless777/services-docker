@@ -5,9 +5,11 @@ version: "3.9"
 ################
 networks:
   home-net:
+    name: 	services-docker_home-net
     external: true
 
   weave-net:
+    name: 	services-docker_weave-net
     external: true
 
   proxy-net:

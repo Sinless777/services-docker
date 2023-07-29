@@ -5,12 +5,15 @@ version: "3.9"
 ################
 networks:
   home-net:
+    name: home-net
     driver: bridge
 
   weave-net:
+    name: weave-net
     driver: bridge
 
   proxy-net:
+    name: proxy-net
     driver: bridge
 
 ###############
