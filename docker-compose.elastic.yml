@@ -106,7 +106,7 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9200"]
+      test: "curl --cacert /usr/share/elasticsearch/config/ca.crt -s https://localhost:9200/_cluster/health | grep -vq '\"status\":\"red\"'"
       interval: 30s
       timeout: 10s
       retries: 5000
