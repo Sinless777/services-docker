@@ -68,6 +68,7 @@ services:
     networks:
       - elastic-net
       - weave-net
+      - host
     labels:
       com.centurylinklabs.watchtower.enable: "true"
 

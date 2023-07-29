@@ -183,7 +183,7 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     expose:
       - 12201/udp
-      - 5044
+      - 5044:5044
       - 9600
       - 5000/tcp
       - 5000/udp
