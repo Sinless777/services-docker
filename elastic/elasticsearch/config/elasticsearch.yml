@@ -4,7 +4,7 @@ network.host: "0.0.0.0"
 http.host: 0.0.0.0
 
 ## License
-xpack.license.self_generated.type: base
+xpack.license.self_generated.type: trial
 
 # Security
 xpack.security.enabled: true
