@@ -200,7 +200,7 @@ services:
 
   fleet-server:
     container_name: elastic-agent
-    hostname: elastic-agent
+    hostname: fleet-server
     image: docker.elastic.co/beats/elastic-agent:${ELK_VERSION}
     restart: unless-stopped
     environment:
