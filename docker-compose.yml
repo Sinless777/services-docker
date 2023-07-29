@@ -10,19 +10,7 @@ networks:
   weave-net:
     driver: bridge
 
-  elastic-net:
-    driver: bridge
-
-  tyler-net:
-    driver: bridge
-
-  kafka-net:
-    driver: bridge
-
-  helix-ai-net:
-    driver: bridge
-
-  devops-net:
+  proxy-net:
     driver: bridge
 
 ###############
