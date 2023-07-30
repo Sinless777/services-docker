@@ -42,16 +42,20 @@ networks:
 services:
 
   packetbeat:
+    image: docker.elastic.co/beats/packetbeat:${ELK_VERSION}
     container_name: packetbeat
     hostname: packetbeat
     user: "root"
-    image: docker.elastic.co/beats/packetbeat:${ELK_VERSION}
+    networks:
+      - elastic-net
+      - weave-net
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
       - NET_RAW
     command: packetbeat -e -strict.perms=false
     volumes:
+      - ${PACKETBEAT_DIR}/config/data:/usr/share/packetbeat/data
       - ${SECRETS_DIR}/elastic_stack/packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
@@ -61,16 +65,15 @@ services:
       LS_JAVA_OPTS: "-Xmx${PACKETBEAT_HEAP} -Xms${PACKETBEAT_HEAP}"
     secrets:
       - source: ca.crt
-        target: /etc/pki/ca-trust/source/anchors/ca.crt
+        target: ${PACKETBEAT_DIR}/config/ca.crt
       - source: packetbeat.cert
-        target: /usr/share/packetbeat/config/packetbeat.cert
+        target: ${PACKETBEAT_DIR}/config/packetbeat.cert
       - source: packetbeat.key
-        target: /usr/share/packetbeat/config/packetbeat.key
-    networks:
-      - elastic-net
-      - weave-net
+        target: ${PACKETBEAT_DIR}/config/packetbeat.key
     labels:
       com.centurylinklabs.watchtower.enable: "true"
+    deploy:
+      mode: global
 
   metricbeat:
     container_name: metricbeat
