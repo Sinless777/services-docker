@@ -4,7 +4,7 @@ setup.dashboards.enabled: true
 # Forcing Elasticsearch index template 
 setup.template.overwrite: true
 
-setup.kibana.host: "https://kibana:5601"
+setup.kibana.host: "https://192.168.86.140:5601"
 setup.kibana.protocol: "https"
 setup.kibana.ssl.enabled: true
 setup.kibana.username: $ELASTIC_USERNAME
