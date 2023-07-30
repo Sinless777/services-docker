@@ -220,7 +220,7 @@ services:
       KIBANA_USERNAME: ${ELASTIC_USERNAME}
       KIBANA_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOSTS: "https://elasticsearch:9200"
-      ENROLL_FORCE: 1
+      FLEET_ENROLL: 1
     secrets:
       - source: ca.crt
         target: ${FLEET_DIR}/config/ca.crt
