@@ -326,6 +326,9 @@ services:
       - elastic-net
       - weave-net
     restart: unless-stopped
+    depends_on:
+      - elasticsearch
+      - kibana
     cap_add:
       - NET_ADMIN
       - NET_RAW
