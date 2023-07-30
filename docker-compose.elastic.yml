@@ -292,7 +292,7 @@ services:
       # the container.
       #
       # Default: none
-      FLEET_SERVER_SERVICE_TOKEN: "${FLEET_SERVER_SERVICE_TOKEN}"
+      # FLEET_SERVER_SERVICE_TOKEN: "${FLEET_SERVER_SERVICE_TOKEN}"
       # (bool) Set to 1 to enroll the Elastic Agent into Fleet Server.
       #
       # Default: false
