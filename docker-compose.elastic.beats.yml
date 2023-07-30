@@ -38,60 +38,6 @@ networks:
 services:
 
 
-  metricbeat:
-    container_name: metricbeat
-    hostname: metricbeat
-    user: root #/var/run/docker.sock
-    image: docker.elastic.co/beats/metricbeat:${ELK_VERSION}
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    entrypoint: [ ]
-    command: >
-      bash -c '
-        metricbeat -e \
-          -E setup.kibana.enabled=true \
-          -E setup.kibana.host=http://kibana:5601 \
-          -E setup.template.enabled=true \
-          -E setup.template.settings.index.number_of_replicas=0 \
-          -E http.enabled=true \
-          -E http.host=0.0.0.0 \
-          -E http.port=5066 \
-          -E monitoring.enabled=false \
-          -E output.elasticsearch.username=elastic \
-          -E output.elasticsearch.password=$ELASTIC__INITIAL_PASSWORD \
-          -E output.elasticsearch.hosts=["http://elasticsearch:9200"] \
-          -E monitoring.cluster_uuid=$(cat /usr/share/setup/cluster_uuid) \
-        '
-    volumes:
-      - ${SECRETS_DIR}/elastic_stack/metricbeat/config/metricbeat.yml:${METRICBEAT_DIR}/metricbeat.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      CONFIG_DIR: ${METRICBEAT_DIR}/config
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      LS_JAVA_OPTS: "-Xmx${METRICBEAT_HEAP} -Xms${METRICBEAT_HEAP}"
-    secrets:
-      - source: elastic-stack-ca.p12
-        target: /etc/pki/ca-trust/source/anchors/elastic-stack-ca.p12
-      - source: ca.crt
-        target: /etc/pki/ca-trust/source/anchors/ca.crt
-      - source: metricbeat.cert
-        target: ${METRICBEAT_DIR}/config/metricbeat.crt
-      - source: metricbeat.key
-        target: ${METRICBEAT_DIR}/config/metricbeat.key
-    networks:
-      - elastic-net
-      - weave-net
-    labels:
-      com.centurylinklabs.watchtower.enable: "true"
-      co.elastic.logs/enabled: false
-      co.elastic.metrics/raw: "[{\"module\":\"beat\",\"hosts\":\"metricbeat:5066\",\"period\":\"10s\",\"xpack.enabled\":\"true\"}]"
-    healthcheck:
-      interval: 10s
-      retries: 12
-      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5066/
 
   filebeat:
     container_name: filebeat
