@@ -67,7 +67,7 @@ services:
       - source: ca.crt
         target: /etc/pki/ca-trust/source/anchors/ca.crt
       - source: packetbeat.cert
-        target: etc/pki/tls/certs/packetbeat.cert
+        target: etc/pki/tls/certs/packetbeat.crt
       - source: packetbeat.key
         target: etc/pki/tls/certs/config/packetbeat.key
     labels:
