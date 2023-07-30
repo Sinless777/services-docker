@@ -296,7 +296,7 @@ services:
       # (bool) Set to 1 to enroll the Elastic Agent into Fleet Server.
       #
       # Default: false
-      FLEET_ENROLL: 1
+      # FLEET_ENROLL: 1
     secrets:
       - source: ca.crt
         target: ${FLEET_DIR}/config/ca.crt
