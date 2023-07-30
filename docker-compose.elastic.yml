@@ -46,6 +46,7 @@ secrets:
   packetbeat.cert:
     file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/packetbeat/packetbeat.crt
 
+
 ################
 ##  NETWORKS  ##
 ################
@@ -211,15 +212,91 @@ services:
     restart: always
     user: root # note, synthetic browser monitors require this set to `elastic-agent`
     environment:
-      FLEET_CA: '${FLEET_DIR}/config/ca.crt'
-      ELK_VERSION: ${ELK_VERSION}
-      KIBANA_HOST: "https://kibana:5601"
-      FLEET_URL: "https://fleet-server:8220"
+      ##
+      ## Common Variables
+      ##
+      #
+      # (string) The Elasticsearch host to communicate with.
+      #
+      # Default: http://elasticsearch:9200
+      ELASTICSEARCH_HOST: https://elasticsearch:9200
+      # (string) The basic authentication username used to connect to Kibana and retrieve a
+      # service_token for Fleet.
+      #
+      # Default: elastic
       ELASTICSEARCH_USERNAME: ${ELASTIC_USERNAME}
-      ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD}
+      # (string) The basic authentication password used to connect to Kibana and retrieve a
+      # service_token for Fleet.
+      #
+      # Default: changeme
+      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      # (string) The path to a certificate authority.
+      #
+      # By default, Elastic Agent uses the list of trusted certificate authorities (CA) from the
+      # operating system where it is running. If the certificate authority that signed your node
+      # certificates is not in the host system’s trusted certificate authorities list, use this
+      # config to add the path to the .pem file that contains your CA’s certificate.
+      #
+      # Default: ""
+      ELASTICSEARCH_CA: ${FLEET_DIR}/config/ca.crt
+      # (string) The Kibana host.
+      #
+      # Default: http://kibana:5601
+      KIBANA_HOST: https://kibana:5601
+      # (string) The basic authentication username used to connect to Kibana to retrieve
+      # a service_token.
+      #
+      # Default: elastic
       KIBANA_USERNAME: ${ELASTIC_USERNAME}
-      KIBANA_PASSWORD: ${ELASTIC_PASSWORD}
-      ELASTICSEARCH_HOSTS: "https://elasticsearch:9200"
+      # (string) The basic authentication password used to connect to Kibana to retrieve
+      # a service_token.
+      #
+      # Default: changeme
+      KIBANA_PASSWORD: ${ELASTICSEARCH_PASSWORD}
+      # (string) The path to a certificate authority.
+      #
+      # By default, Elastic Agent uses the list of trusted certificate authorities (CA) from the
+      # operating system where it is running. If the certificate authority that signed your
+      # node certificates is not in the host system’s trusted certificate authorities list, use
+      # this config to add the path to the .pem file that contains your CA’s certificate.
+      #
+      # Default: ""
+      KIBANA_CA: ${FLEET_DIR}/config/ca.crt
+      ##
+      ## Prepare Kibana for Fleet
+      ##
+      #
+      # (int) Set to 1 to enable Fleet setup. Enabling Fleet is required before Fleet Server
+      # will start. When this action is not performed, a user must manually log in to Kibana
+      # and visit the Fleet page to enable setup.
+      #
+      # Default: none
+      KIBANA_FLEET_SETUP: 1
+      ##
+      ## Prepare Kibana for Fleet
+      ##
+      #
+      # (int) Set to 1 to bootstrap Fleet Server on this Elastic Agent. When set to 1, this
+      # automatically forces Fleet enrollment as well.
+      #
+      # Default: none
+      FLEET_SERVER_ENABLE: 1
+      # (string) The name of the policy for Fleet Server to use on itself. Overrides
+      # FLEET_TOKEN_POLICY_NAME when set.
+      #
+      # Default: none
+      FLEET_SERVER_POLICY_NAME: fleet-server
+      #
+      # (string) Service token to use for communication with Elasticsearch and Kibana if
+      # KIBANA_FLEET_SETUP is enabled. If the service token value and service token path are
+      # specified the value may be used for setup and the path is passed to the agent in
+      # the container.
+      #
+      # Default: none
+      FLEET_SERVER_SERVICE_TOKEN: "${FLEET_SERVER_SERVICE_TOKEN}"
+      # (bool) Set to 1 to enroll the Elastic Agent into Fleet Server.
+      #
+      # Default: false
       FLEET_ENROLL: 1
     secrets:
       - source: ca.crt
@@ -235,47 +312,8 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     ports:
       - 8220:8220
-    links:
-      - logstash
     healthcheck:
       test: curl -s https://elastic-agent:8220 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
       timeout: 10s
       retries: 5
-
-  packetbeat:
-    image: docker.elastic.co/beats/packetbeat:${ELK_VERSION}
-    container_name: packetbeat
-    hostname: packetbeat
-    user: "root"
-    networks:
-      - elastic-net
-      - weave-net
-    restart: unless-stopped
-    depends_on:
-      - elasticsearch
-      - kibana
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    command: packetbeat -e -strict.perms=false
-    volumes:
-      - ${PACKETBEAT_DIR}/config/data:/usr/share/packetbeat/data
-      - ${SECRETS_DIR}/elastic_stack/packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      CONFIG_DIR: ${PACKETBEAT_DIR}/config
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      LS_JAVA_OPTS: "-Xmx${PACKETBEAT_HEAP} -Xms${PACKETBEAT_HEAP}"
-    secrets:
-      - source: ca.crt
-        target: /etc/pki/ca-trust/source/anchors/ca.crt
-      - source: packetbeat.cert
-        target: /etc/pki/tls/certs/packetbeat.crt
-      - source: packetbeat.key
-        target: /etc/pki/tls/private/packetbeat.key
-    labels:
-      com.centurylinklabs.watchtower.enable: "true"
-    deploy:
-      mode: global
