@@ -10,8 +10,8 @@ setup.kibana.ssl.enabled: true
 setup.kibana.username: '${ELASTIC_USERNAME:}'
 setup.kibana.password: '${ELASTIC_PASSWORD:}'
 setup.kibana.ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
-setup.kibana.ssl.certificate: ${CONFIG_DIR}/packetbeat.crt
-setup.kibana.ssl.key: ${CONFIG_DIR}/packetbeat.key
+setup.kibana.ssl.certificate: etc/pki/tls/certs/packetbeat.cert
+setup.kibana.ssl.key: etc/pki/tls/certs/config/packetbeat.key
 setup.kibana.ssl.verification_mode: none
 
 packetbeat.interfaces.device: any
