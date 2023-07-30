@@ -220,7 +220,6 @@ services:
       ELASTICSEARCH_HOSTS: "https://elasticsearch:9200"
       FLEET_ENROLL_INSECURE: 1
       ENROLL_FORCE: 1
-      PREFLIGHT_CHECK: 1
     secrets:
       - source: ca.crt
         target: ${FLEET_DIR}/config/ca.crt
