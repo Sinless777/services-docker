@@ -4,7 +4,7 @@ setup.dashboards.enabled: true
 # Forcing Elasticsearch index template 
 setup.template.overwrite: true
 
-setup.kibana.host: "https://192.168.86.140:5601"
+setup.kibana.host: "https://kibana:5601"
 setup.kibana.protocol: "https"
 setup.kibana.ssl.enabled: true
 setup.kibana.username: '${ELASTIC_USERNAME}'
@@ -53,7 +53,7 @@ packetbeat.protocols.cassandra:
 #- add_cloud_metadata: ~
 
 output.logstash:
-  hosts: ["192.168.86.140:5044"]
+  hosts: ["logstash:5044"]
   ssl.certificate_authorities: [ "/etc/pki/ca-trust/source/anchors/ca.crt" ]
   ssl.certificate: /etc/pki/tls/certs/packetbeat.crt
   ssl.key: /etc/pki/tls/private/packetbeat.key
