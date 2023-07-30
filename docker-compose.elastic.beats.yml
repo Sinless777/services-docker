@@ -67,9 +67,9 @@ services:
       - source: ca.crt
         target: /etc/pki/ca-trust/source/anchors/ca.crt
       - source: packetbeat.cert
-        target: etc/pki/tls/certs/packetbeat.crt
+        target: /etc/pki/tls/certs/packetbeat.crt
       - source: packetbeat.key
-        target: etc/pki/tls/certs/config/packetbeat.key
+        target: /etc/pki/tls/private/packetbeat.key
     labels:
       com.centurylinklabs.watchtower.enable: "true"
     deploy:
