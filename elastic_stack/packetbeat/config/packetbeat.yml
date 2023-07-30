@@ -7,8 +7,8 @@ setup.template.overwrite: true
 setup.kibana.host: "https://kibana:5601"
 setup.kibana.protocol: "https"
 setup.kibana.ssl.enabled: true
-setup.kibana.username: '${ELASTIC_USERNAME}'
-setup.kibana.password: '${ELASTIC_PASSWORD}'
+setup.kibana.username: ${ELASTIC_USERNAME}
+setup.kibana.password: ${ELASTIC_PASSWORD}
 setup.kibana.ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
 setup.kibana.ssl.certificate: /etc/pki/tls/certs/packetbeat.crt
 setup.kibana.ssl.key: /etc/pki/tls/private/packetbeat.key
