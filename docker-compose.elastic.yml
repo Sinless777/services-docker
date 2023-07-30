@@ -153,7 +153,7 @@ services:
     links:
       - elasticsearch
     healthcheck:
-      test: curl -s https://kibana:5601 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl -s https://192.168.86.140:5601/api/status >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
       timeout: 10s
       retries: 5
