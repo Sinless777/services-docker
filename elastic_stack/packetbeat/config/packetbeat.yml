@@ -55,8 +55,8 @@ packetbeat.protocols.cassandra:
 output.logstash:
   hosts: ["192.168.86.140:5044"]
   ssl.certificate_authorities: [ "/etc/pki/ca-trust/source/anchors/ca.crt" ]
-  ssl.certificate: ${CONFIG_DIR}/packetbeat.crt
-  ssl.key: ${CONFIG_DIR}/packetbeat.key
+  ssl.certificate: etc/pki/tls/certs/packetbeat.cert
+  ssl.key: etc/pki/tls/certs/config/packetbeat.key
   index: packetbeat
 
 # Commented out for reference if you wanted
