@@ -235,6 +235,8 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     ports:
       - 8220:8220
+    links:
+      - logstash
     healthcheck:
       test: curl -s https://elastic-agent:8220 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
