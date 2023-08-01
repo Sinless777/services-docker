@@ -364,7 +364,7 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
-      co.elastic.logs/enabled: false
+      co.elastic.logs/enabled: true
       co.elastic.metrics/raw: "[{\"module\":\"beat\",\"hosts\":\"filebeat:5066\",\"period\":\"10s\",\"xpack.enabled\":\"true\"}]"
     healthcheck:
       interval: 10s
