@@ -419,11 +419,11 @@ services:
       BEATS_SYSTEM_PASSWORD: ${ELASTIC_PASSWORD}
     secrets:
       - source: ca.crt
-        target: ${FLEET_DIR}/config/ca.crt
-      - source: fleet-server.cert
-        target: ${FLEET_DIR}/config/fleet-server.cert
-      - source: fleet-server.key
-        target: ${FLEET_DIR}/config/fleet-server.key
+        target: ${METRICBEAT_DIR}/config/ca.crt
+      - source: metricbeat.cert
+        target: ${METRICBEAT_DIR}/config/fleet-server.cert
+      - source: metricbeat.key
+        target: ${METRICBEAT_DIR}/config/metricbeat.key
     networks:
       - elastic-net
       - weave-net
@@ -431,5 +431,6 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     depends_on:
       - elasticsearch
+      - logstash
     healthcheck:
       test: metricbeat --strict.perms=false test config
