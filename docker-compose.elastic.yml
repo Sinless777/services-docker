@@ -330,7 +330,6 @@ services:
     image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
     restart: unless-stopped
     user: root #/var/run/docker.sock
-    entrypoint: [ ]
     command:
       # Disable config file permissions checks. Allows mounting
       # 'config/filebeat.yml' even if it's not owned by root.
