@@ -431,3 +431,5 @@ services:
       com.centurylinklabs.watchtower.enable: "true"
     depends_on:
       - elasticsearch
+    healthcheck:
+      test: metricbeat --strict.perms=false test config
