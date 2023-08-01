@@ -29,8 +29,9 @@ filebeat.autodiscover:
 monitoring:
   enabled: true
   elasticsearch:
-    username: beats_system
-    password: ${BEATS_SYSTEM_PASSWORD}
+    ssl.certificate_authorities: [ "${CONFIG_DIR}/ca.crt" ]
+    ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
+    ssl.key: "${CONFIG_DIR}/filebeat.key"
 
 output.logstash:
   enabled: true
