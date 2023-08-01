@@ -29,13 +29,14 @@ filebeat.autodiscover:
 monitoring:
   enabled: true
   elasticsearch:
+    hosts: ["https://elasticsearch:9200"]
     ssl.certificate_authorities: [ "${CONFIG_DIR}/ca.crt" ]
     ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
     ssl.key: "${CONFIG_DIR}/filebeat.key"
 
 output.logstash:
   enabled: true
-  hosts: ["logstash:5045"]
+  hosts: ["logstash:5044"]
   username: filebeat_internal
   password: ${FILEBEAT_INTERNAL_PASSWORD}
   ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
