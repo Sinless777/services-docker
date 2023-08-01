@@ -123,7 +123,7 @@ services:
       CONFIG_DIR: ${KIBANA_DIR}/config
       ELASTICSEARCH_URL: https://elasticsearch:9200
       ELASTICSEARCH_HOSTS: https://elasticsearch:9200
-      ELASTIC_USERNAME: kibana_system
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
       KIBANA_URL: ${KIBANA_URL}
