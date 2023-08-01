@@ -1,5 +1,5 @@
 ## Cluster Settings
-cluster.name: "elk-tls-cluster"
+cluster.name: "helix_ai"
 network.host: "0.0.0.0"
 http.host: 0.0.0.0
 
