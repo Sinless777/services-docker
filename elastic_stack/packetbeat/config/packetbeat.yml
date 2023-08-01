@@ -3,14 +3,12 @@ setup.dashboards.enabled: true
 
 # Forcing Elasticsearch index template 
 setup.template.overwrite: true
-
-setup.kibana.host: "https://kibana:5601"
-setup.kibana.protocol: "https"
-setup.kibana.ssl.enabled: true
-setup.kibana.ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
-setup.kibana.ssl.certificate: /etc/pki/tls/certs/packetbeat.crt
-setup.kibana.ssl.key: /etc/pki/tls/private/packetbeat.key
-setup.kibana.ssl.verification_mode: none
+setup.kibana:
+  host: "https://kibana:5601"
+  ssl.enabled: true
+  ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
+  ssl.certificate: "/etc/pki/tls/certs/packetbeat.crt"
+  ssl.key: "/etc/pki/tls/private/packetbeat.key"
 
 packetbeat.interfaces.device: any
 
@@ -53,14 +51,14 @@ processors:
 monitoring:
   enabled: true
   elasticsearch:
-    hosts: ["elasticsearch:9200"]
+    hosts: ["https://elasticsearch:9200"]
     username: beats_system
     ssl.certificate_authorities: [ "/etc/pki/ca-trust/source/anchors/ca.crt" ]
     ssl.certificate: /etc/pki/tls/private/packetbeat.key
     ssl.key: /etc/pki/tls/private/packetbeat.key
 
 output.logstash:
-  hosts: ["logstash:5044"]
+  hosts: ["https://logstash:5044"]
   ssl.certificate_authorities: [ "/etc/pki/ca-trust/source/anchors/ca.crt" ]
   ssl.certificate: /etc/pki/tls/private/packetbeat.key
   ssl.key: /etc/pki/tls/private/packetbeat.key

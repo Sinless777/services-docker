@@ -3,6 +3,7 @@ setup.template:
   enabled: true
 setup.kibana:
   host: "https://kibana:5601"
+  ssl.enabled: true
   ssl.certificate_authorities: [ "${CONFIG_DIR}/ca.crt" ]
   ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
   ssl.key: "${CONFIG_DIR}/filebeat.key"
@@ -22,7 +23,7 @@ filebeat.inputs:
   - type: tcp
     enabled: true
     max_message_size: 10MiB
-    host: "filebeat:9000"
+    host: "https://filebeat:9000"
 
 filebeat.autodiscover:
   providers:
@@ -41,9 +42,9 @@ monitoring:
 
 output.logstash:
   enabled: true
-  hosts: ["logstash:5044"]
+  hosts: ["https://logstash:5044"]
   username: filebeat_internal
-  password: ${FILEBEAT_INTERNAL_PASSWORD}
+  password: '${FILEBEAT_INTERNAL_PASSWORD}'
   ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
   ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
   ssl.key: "${CONFIG_DIR}/filebeat.key"
