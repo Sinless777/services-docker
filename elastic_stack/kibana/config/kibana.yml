@@ -11,6 +11,7 @@ elasticsearch.password: "${ELASTIC_PASSWORD}"
 
 # Elasticsearch monitoring settings
 monitoring.ui.container.elasticsearch.enabled: true
+monitoring.ui.container.logstash.enabled: true
 
 # X-Pack Security
 xpack.security.enabled: true
@@ -31,6 +32,7 @@ xpack.fleet.agents.enabled: true
 xpack.fleet.agents.tlsCheckDisabled: true
 xpack.fleet.agents.kibana.host: "https://kibana:5601"
 xpack.fleet.agents.elasticsearch.host: "https://elasticsearch:9200"
+xpack.fleet.agents.fleet_server.hosts: [ https://fleet-server:8220 ]
 
 xpack.ingestManager.enabled: true
 xpack.ingestManager.fleet.enabled: true
@@ -38,11 +40,11 @@ xpack.ingestManager.fleet.enabled: true
 xpack.fleet.packages:
   - name: fleet_server
     version: latest
-  - name: apm
+  - name: system
     version: latest
   - name: elastic_agent
     version: latest
-  - name: endpoint
+  - name: apm
     version: latest
 
 xpack.fleet.agentPolicies:

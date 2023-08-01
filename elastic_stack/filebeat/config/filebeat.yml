@@ -5,15 +5,38 @@ output.elasticsearch.username: ${ELASTIC_USERNAME}
 output.elasticsearch.password: ${ELASTIC_PASSWORD}
 path.config: ${CONFIG_DIR}
 
+processors:
+  - add_cloud_metadata: ~
+
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
 filebeat.inputs:
   - type: tcp
     enabled: true
     max_message_size: 10MiB
     host: "filebeat:9000"
 
+filebeat.autodiscover:
+  providers:
+    # The Docker autodiscover provider automatically retrieves logs from Docker
+    # containers as they start and stop.
+    - type: docker
+      hints.enabled: true
+
+monitoring:
+  enabled: true
+  elasticsearch:
+    username: beats_system
+    password: ${BEATS_SYSTEM_PASSWORD}
+
 output.logstash:
   enabled: true
   hosts: ["logstash:5045"]
+  username: filebeat_internal
+  password: ${FILEBEAT_INTERNAL_PASSWORD}
   ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
   ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
   ssl.key: "${CONFIG_DIR}/filebeat.key"
@@ -24,3 +47,7 @@ output.elasticsearch:
   ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
   ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
   ssl.key: "${CONFIG_DIR}/filebeat.key"
+
+http:
+  enabled: true
+  host: 0.0.0.0

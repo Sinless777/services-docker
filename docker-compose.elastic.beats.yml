@@ -37,53 +37,45 @@ networks:
 
 services:
 
-
-
-  filebeat:
-    container_name: filebeat
-    hostname: filebeat
-    image: docker.elastic.co/beats/filebeat:${ELK_VERSION}
-    restart: unless-stopped
-    user: root #/var/run/docker.sock
-    entrypoint: [ ]
-    command: >
-      bash -c '
-        filebeat -e \
-          -E setup.kibana.enabled=true \
-          -E setup.kibana.host=http://kibana:5601 \
-          -E setup.template.enabled=true \
-          -E setup.template.settings.index.number_of_replicas=0 \
-          -E http.enabled=true \
-          -E http.host=0.0.0.0 \
-          -E http.port=5066 \
-          -E monitoring.enabled=false \
-          -E output.elasticsearch.username=elastic \
-          -E output.elasticsearch.password=$ELASTIC__INITIAL_PASSWORD \
-          -E output.elasticsearch.hosts=["http://elasticsearch:9200"] \
-          -E monitoring.cluster_uuid=$(cat /usr/share/setup/cluster_uuid) \
-      '
-    volumes:
-      - ${SECRETS_DIR}/elastic_stack/filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml:ro
-    environment:
-      CONFIG_DIR: ${FILEBEAT_DIR}/config
-      LS_JAVA_OPTS: "-Xmx${FILEBEAT_HEAP} -Xms${FILEBEAT_HEAP}"
-    secrets:
-      - source: ca.crt
-        target: ${FILEBEAT_DIR}/config/ca.crt
-      - source: filebeat.cert
-        target: ${FILEBEAT_DIR}/config/filebeat.crt
-      - source: filebeat.key
-        target: ${FILEBEAT_DIR}/config/filebeat.key
-    expose:
-      - 9000
+  packetbeat:
+    image: docker.elastic.co/beats/packetbeat:${ELK_VERSION}
+    container_name: packetbeat
+    hostname: packetbeat
+    user: "root"
     networks:
       - elastic-net
       - weave-net
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command:
+      # Log to stderr.
+      - -e
+      # Disable config file permissions checks. Allows mounting
+      # 'config/filebeat.yml' even if it's not owned by root.
+      # see: https://www.elastic.co/guide/en/beats/libbeat/current/config-file-permissions.html
+      - --strict.perms=false
+    volumes:
+      - ${PACKETBEAT_DIR}/data:/usr/share/packetbeat/data
+      - ${SECRETS_DIR}/elastic_stack/packetbeat/config/packetbeat.yml:${PACKETBEAT_DIR}/packetbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONFIG_DIR: ${PACKETBEAT_DIR}/config
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      LS_JAVA_OPTS: "-Xmx${PACKETBEAT_HEAP} -Xms${PACKETBEAT_HEAP}"
+    secrets:
+      - source: ca.crt
+        target: /etc/pki/ca-trust/source/anchors/ca.crt
+      - source: packetbeat.cert
+        target: /etc/pki/tls/certs/packetbeat.crt
+      - source: packetbeat.key
+        target: /etc/pki/tls/private/packetbeat.key
     labels:
       com.centurylinklabs.watchtower.enable: "true"
-      co.elastic.logs/enabled: false
-      co.elastic.metrics/raw: "[{\"module\":\"beat\",\"hosts\":\"filebeat:5066\",\"period\":\"10s\",\"xpack.enabled\":\"true\"}]"
-    healthcheck:
-      interval: 10s
-      retries: 12
-      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5066/
+    links:
+      - logstash
+    deploy:
+      mode: global
+
