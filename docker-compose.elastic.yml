@@ -86,9 +86,9 @@ services:
         target: ${ELASTIC_DIR}/config/elasticsearch.crt
       - source: elasticsearch.key
         target: ${ELASTIC_DIR}/config/elasticsearch.key
-    expose:
-      - 9200
-      - 9300
+    ports:
+      - 9200:9200
+      - 9300:9300
     ulimits:
       memlock:
         soft: -1
