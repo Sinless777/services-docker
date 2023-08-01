@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 # Exit on Error
 set -e
-
 CONFIG_DIR=/usr/share/elasticsearch/config
 OUTPUT_FILE=/secrets/elasticsearch.keystore
 NATIVE_FILE=$CONFIG_DIR/elasticsearch.keystore
@@ -16,7 +15,6 @@ CA_KEY=$CA_DIR/ca/ca.key
 BUNDLE_ZIP=$OUTPUT_DIR/bundle.zip
 CERT_KEYSTORES_ZIP=$OUTPUT_DIR/cert_keystores.zip
 HTTP_ZIP=$OUTPUT_DIR/http.zip
-
 apt-get install unzip openssl -y
 
 create_self_signed_ca()
