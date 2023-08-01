@@ -332,8 +332,6 @@ services:
     user: root #/var/run/docker.sock
     entrypoint: [ ]
     command:
-      # Log to stderr.
-      - -e
       # Disable config file permissions checks. Allows mounting
       # 'config/filebeat.yml' even if it's not owned by root.
       # see: https://www.elastic.co/guide/en/beats/libbeat/current/config-file-permissions.html
