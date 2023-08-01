@@ -143,7 +143,7 @@ services:
       - weave-net
       - proxy-net
     labels:
-      co.elastic.logs/enabled: false
+      co.elastic.logs/enabled: true
       co.elastic.logs/module: kibana
       co.elastic.logs/fileset: log
       co.elastic.metrics/raw: "[{\"module\":\"kibana\",\"hosts\":\"http://kibana:5601\",\"period\":\"10s\",\"xpack.enabled\":\"true\",\"username\":\"kibana_system\",\"password\":\"$ELASTIC__INITIAL_PASSWORD\"}]"
