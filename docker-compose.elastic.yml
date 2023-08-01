@@ -178,7 +178,6 @@ services:
     volumes:
       - ${SECRETS_DIR}/elastic_stack/logstash/config/logstash.yml:${LOGSTASH_DIR}/config/logstash.yml:ro
       - ${SECRETS_DIR}/elastic_stack/logstash/pipeline/logstash.conf:${LOGSTASH_DIR}/pipeline/logstash.conf:ro
-      - ${SECRETS_DIR}/elastic_stack/logstash/pipeline/metricbeat.conf:${LOGSTASH_DIR}/pipeline/metricbeat.conf
     environment:
       CONFIG_DIR: ${LOGSTASH_DIR}/config
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}

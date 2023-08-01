@@ -1,6 +1,11 @@
 name: filebeat
 setup.template:
   enabled: true
+setup.kibana:
+  host: "https://kibana:5601"
+  ssl.certificate_authorities: [ "${CONFIG_DIR}/ca.crt" ]
+  ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
+  ssl.key: "${CONFIG_DIR}/filebeat.key"
 output.elasticsearch.username: ${ELASTIC_USERNAME}
 output.elasticsearch.password: ${ELASTIC_PASSWORD}
 path.config: ${CONFIG_DIR}
@@ -44,7 +49,7 @@ output.logstash:
   ssl.key: "${CONFIG_DIR}/filebeat.key"
 
 output.elasticsearch:
-  enabled: false
+  enabled: true
   hosts: ["https://elasticsearch:9200"]
   ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
   ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
@@ -53,3 +58,5 @@ output.elasticsearch:
 http:
   enabled: true
   host: 0.0.0.0
+
+# filebeat.modules:
