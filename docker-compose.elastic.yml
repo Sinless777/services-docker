@@ -380,6 +380,7 @@ services:
 
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:${ELK_VERSION}
+    container_name: metricbeat
     # Run as 'root' instead of 'metricbeat' (uid 1000) to allow reading
     # 'docker.sock' and the host's filesystem.
     user: root
