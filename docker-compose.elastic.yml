@@ -46,6 +46,12 @@ secrets:
   packetbeat.cert:
     file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/packetbeat/packetbeat.crt
 
+  filebeat.key:
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/filebeat/filebeat.key
+
+  filebeat.cert:
+    file: ${SECRETS_DIR}/elastic_stack/secrets/certificates/filebeat/filebeat.crt
+
 
 ################
 ##  NETWORKS  ##
