@@ -238,7 +238,7 @@ services:
       # config to add the path to the .pem file that contains your CA’s certificate.
       #
       # Default: ""
-      ELASTICSEARCH_CA: ${ELASTIC_DIR}/config/ca.crt
+      ELASTICSEARCH_CA: ${FLEET_DIR}/config/ca.crt
       # (string) The Kibana host.
       #
       # Default: http://kibana:5601
@@ -261,7 +261,7 @@ services:
       # this config to add the path to the .pem file that contains your CA’s certificate.
       #
       # Default: ""
-      KIBANA_CA: ${KIBANA_DIR}/config/ca.crt
+      KIBANA_CA: ${FLEET_DIR}/config/ca.crt
       ##
       ## Prepare Kibana for Fleet
       ##
