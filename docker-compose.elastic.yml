@@ -343,7 +343,7 @@ services:
           -E http.port=5066 \
           -E monitoring.enabled=false \
           -E output.elasticsearch.username=elastic \
-          -E output.elasticsearch.password=$ELASTIC__INITIAL_PASSWORD \
+          -E output.elasticsearch.password=$ELASTIC_PASSWORD \
           -E output.elasticsearch.hosts=["http://elasticsearch:9200"] \
           -E monitoring.cluster_uuid=$(cat /usr/share/setup/cluster_uuid) \
       '
