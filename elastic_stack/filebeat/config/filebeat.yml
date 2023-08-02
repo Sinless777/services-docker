@@ -29,6 +29,7 @@ filebeat.autodiscover:
 monitoring:
   enabled: true
   elasticsearch:
+    hosts: ["https://elasticsearch:9200"]
     ssl.certificate_authorities: [ "${CONFIG_DIR}/ca.crt" ]
     ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
     ssl.key: "${CONFIG_DIR}/filebeat.key"

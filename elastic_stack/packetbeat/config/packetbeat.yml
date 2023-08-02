@@ -6,9 +6,9 @@ setup.template.overwrite: true
 setup.kibana:
   host: "https://kibana:5601"
   ssl.enabled: true
-  ssl.certificate_authorities: ["/etc/pki/ca-trust/source/anchors/ca.crt"]
-  ssl.certificate: "/etc/pki/tls/certs/packetbeat.crt"
-  ssl.key: "/etc/pki/tls/private/packetbeat.key"
+  ssl.certificate_authorities: [ "${PACKETBEAT_DIR}/config/ca.crt" ]
+  ssl.certificate: ${PACKETBEAT_DIR}/config/packetbeat.crt
+  ssl.key: ${PACKETBEAT_DIR}/config/packetbeat.key
 
 packetbeat.interfaces.device: any
 
@@ -53,15 +53,16 @@ monitoring:
   elasticsearch:
     hosts: ["https://elasticsearch:9200"]
     username: beats_system
-    ssl.certificate_authorities: [ "/etc/pki/ca-trust/source/anchors/ca.crt" ]
-    ssl.certificate: /etc/pki/tls/private/packetbeat.key
-    ssl.key: /etc/pki/tls/private/packetbeat.key
+    ssl.certificate_authorities: [ "${PACKETBEAT_DIR}/config/ca.crt" ]
+    ssl.certificate: ${PACKETBEAT_DIR}/config/packetbeat.crt
+    ssl.key: ${PACKETBEAT_DIR}/config/packetbeat.key
 
 output.logstash:
+  enabled: true
   hosts: ["https://logstash:5044"]
-  ssl.certificate_authorities: [ "/etc/pki/ca-trust/source/anchors/ca.crt" ]
-  ssl.certificate: /etc/pki/tls/private/packetbeat.key
-  ssl.key: /etc/pki/tls/private/packetbeat.key
+  ssl.certificate_authorities: [ "${PACKETBEAT_DIR}/config/ca.crt" ]
+  ssl.certificate: ${PACKETBEAT_DIR}/config/packetbeat.crt
+  ssl.key: ${PACKETBEAT_DIR}/config/packetbeat.key
   index: packetbeat
 
 # Commented out for reference if you wanted
