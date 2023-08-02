@@ -1,12 +1,6 @@
 name: filebeat
 setup.template:
   enabled: true
-setup.kibana:
-  host: "https://kibana:5601"
-  ssl.enabled: true
-  ssl.certificate_authorities: [ "${CONFIG_DIR}/ca.crt" ]
-  ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
-  ssl.key: "${CONFIG_DIR}/filebeat.key"
 output.elasticsearch.username: ${ELASTIC_USERNAME}
 output.elasticsearch.password: ${ELASTIC_PASSWORD}
 path.config: ${CONFIG_DIR}
@@ -23,7 +17,7 @@ filebeat.inputs:
   - type: tcp
     enabled: true
     max_message_size: 10MiB
-    host: "https://filebeat:9000"
+    host: "filebeat:9000"
 
 filebeat.autodiscover:
   providers:
@@ -35,7 +29,6 @@ filebeat.autodiscover:
 monitoring:
   enabled: true
   elasticsearch:
-    hosts: ["https://elasticsearch:9200"]
     ssl.certificate_authorities: [ "${CONFIG_DIR}/ca.crt" ]
     ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
     ssl.key: "${CONFIG_DIR}/filebeat.key"
@@ -44,13 +37,13 @@ output.logstash:
   enabled: true
   hosts: ["https://logstash:5044"]
   username: filebeat_internal
-  password: '${FILEBEAT_INTERNAL_PASSWORD}'
+  password: ${FILEBEAT_INTERNAL_PASSWORD}
   ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
   ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
   ssl.key: "${CONFIG_DIR}/filebeat.key"
 
 output.elasticsearch:
-  enabled: true
+  enabled: false
   hosts: ["https://elasticsearch:9200"]
   ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
   ssl.certificate: "${CONFIG_DIR}/filebeat.crt"
@@ -59,5 +52,3 @@ output.elasticsearch:
 http:
   enabled: true
   host: 0.0.0.0
-
-# filebeat.modules:

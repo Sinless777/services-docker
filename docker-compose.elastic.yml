@@ -199,12 +199,11 @@ services:
       - weave-net
     labels:
       com.centurylinklabs.watchtower.enable: "true"
-    expose:
-      - 12201/udp
+    ports:
+      - 12201:12201/udp
       - 5044:5044
-      - 9600
-      - 5000/tcp
-      - 5000/udp
+      - 9600:9600
+      - 5000:5000
     depends_on:
       - elasticsearch
       - kibana

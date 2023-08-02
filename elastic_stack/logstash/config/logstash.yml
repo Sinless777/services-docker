@@ -3,13 +3,6 @@ http.host: "0.0.0.0"
 
 path.settings: ${CONFIG_DIR}
 
-setup.kibana:
-  host: "https://kibana:5601"
-  ssl.enabled: true
-  ssl.certificate_authorities: ["${CONFIG_DIR}/ca.crt"]
-  ssl.certificate: "${CONFIG_DIR}/packetbeat.crt"
-  ssl.key: "${CONFIG_DIR}/packetbeat.key"
-
 # X-Pack Security Options
 xpack.management.elasticsearch.username: "${ELASTIC_USERNAME}"
 xpack.management.elasticsearch.password: "${ELASTIC_PASSWORD}"
