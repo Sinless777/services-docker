@@ -362,8 +362,8 @@ services:
         target: ${FILEBEAT_DIR}/config/filebeat.crt
       - source: filebeat.key
         target: ${FILEBEAT_DIR}/config/filebeat.key
-    expose:
-      - 9000
+    ports:
+      - 9000:9000
     networks:
       - elastic-net
       - weave-net
