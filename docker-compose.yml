@@ -30,7 +30,7 @@ volumes:
 
 services:
   portainer:
-    image: portainer/portainer-ee:latest
+    image: portainer/portainer-ce:latest
     container_name: portainer
     command: -H unix:///var/run/docker.sock
     networks:
