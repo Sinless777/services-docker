@@ -40,6 +40,7 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     restart: always
+    container_name: jenkins
     privileged: true
     user: root
     networks:
@@ -51,8 +52,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       com.centurylinklabs.watchtower.enable: true
-    deploy:
-      replicas: 3
     healthcheck:
       test: ["CMD", "curl", "-f", "https://https://jenkins.sinlessgamesllc.com/"]
       interval: 1s
