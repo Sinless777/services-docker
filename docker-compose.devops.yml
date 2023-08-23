@@ -52,6 +52,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       com.centurylinklabs.watchtower.enable: true
+    deploy:
+      replicas: 3
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 1s
