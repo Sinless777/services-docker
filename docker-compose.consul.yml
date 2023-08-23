@@ -130,7 +130,7 @@ services:
   vdb:
     image: mysql:8.0
     volumes:
-      - mysql_data2:/var/lib/mysql
+      - /home/sinless777/services/mysql/vdb:/var/lib/mysql
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
