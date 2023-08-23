@@ -32,7 +32,8 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
-    command: -H unix:///var/run/docker.sock
+    security_opt:
+      - no-new-privileges:true
     networks:
       - weave-net
       - proxy-net
