@@ -53,7 +53,7 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://https://jenkins.sinlessgamesllc.com/"]
+      test: ["CMD", "curl", "-f", "https://jenkins.sinlessgamesllc.com/"]
       interval: 1s
       timeout: 5s
       retries: 5
