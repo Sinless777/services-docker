@@ -32,7 +32,7 @@ services:
   portainer:
     image: portainer/portainer-ee:latest
     container_name: portainer
-    command: --admin-password 'CGg}#3rUWa-@QvBypyUEE5Mzn-@U=bfGRCPR1Y%p'
+    command: -H unix:///var/run/docker.sock
     networks:
       - weave-net
       - proxy-net
