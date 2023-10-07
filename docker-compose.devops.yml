@@ -53,10 +53,14 @@ services:
     labels:
       com.centurylinklabs.watchtower.enable: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://jenkins.sinlessgamesllc.com/"]
+      test: 
+        - "curl"
+        - "-f"
+        - "https://jenkins.sinlessgamesllc.com/"
       interval: 1s
       timeout: 5s
       retries: 5
+
 
   jenkins-agent-1:
       image: jenkins/ssh-agent:jdk11
@@ -69,7 +73,7 @@ services:
       expose:
         - 22
       environment:
-        - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLv839Vkhr+JVHPPWesGtkImPpbccdnQpDVd/YEqYCilgZd7V7lD6Wt6y88CbxZUDq35jmpD6DvWU/Q3/H4cySp1P2OCLeMWXG7CqD1s0bG6488iUngbrzmO44xhqROEMuR7Ne2p6FwrzHBTqp233MqhOnbk4QPAP4vnh7uu2wvOxQ5H4I7Flq8obLkez/7yA7edkcOsgz2r0feniJPdBtP+hozoiKpH89oYy3LHqLLVHdIUjrw6Mzw/xd2MlvwEWlw/cLz9J8zk+AIHfDzh7d+PrGD/Axla759+spIFc8CgBFglQFN20pmTJr7A+a/TPPZCTW7qIg1BL0ySTzqiLF
+        - JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOeItPaeqU5tYtbBtrPRLTX9J2nkFXHVosUSPFLZ0fps disdainful777@gmail.com
 
   jenkins-agent-2:
       image: jenkins/ssh-agent:jdk11
@@ -82,8 +86,7 @@ services:
       expose:
         - 22
       environment:
-        - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLv839Vkhr+JVHPPWesGtkImPpbccdnQpDVd/YEqYCilgZd7V7lD6Wt6y88CbxZUDq35jmpD6DvWU/Q3/H4cySp1P2OCLeMWXG7CqD1s0bG6488iUngbrzmO44xhqROEMuR7Ne2p6FwrzHBTqp233MqhOnbk4QPAP4vnh7uu2wvOxQ5H4I7Flq8obLkez/7yA7edkcOsgz2r0feniJPdBtP+hozoiKpH89oYy3LHqLLVHdIUjrw6Mzw/xd2MlvwEWlw/cLz9J8zk+AIHfDzh7d+PrGD/Axla759+spIFc8CgBFglQFN20pmTJr7A+a/TPPZCTW7qIg1BL0ySTzqiLF
-
+        - JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOeItPaeqU5tYtbBtrPRLTX9J2nkFXHVosUSPFLZ0fps disdainful777@gmail.com
   heimdall:
     image: linuxserver/heimdall
     container_name: heimdall
