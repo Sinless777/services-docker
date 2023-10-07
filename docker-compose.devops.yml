@@ -70,7 +70,7 @@ services:
       expose:
         - 22
       environment:
-        - JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOeItPaeqU5tYtbBtrPRLTX9J2nkFXHVosUSPFLZ0fps disdainful777@gmail.com
+        - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwIFlYVNi5uDglaJH6ofe52+1GCkNr5wml7j2EoYc2ARvaiOa5Ndew4ptFB0gDaBJpyzKD1iShHHTFGdH2tZSJvtmsdYKSahtZOICAgtFQqlAaxuB4o4JR6bFoOSDyzrklITTMrQm/bLSpbyEELyXcYWtvM0wNsFrUZvhPzVeFXmdfPg+8Eu102y439qRikDVlmPeGZJLD8/T+paP/ysFZszSoSvT2rTLbr4/ADMbCnpOHVWOeARmiVUTN8/8CPx06Zw726xUcnnMfIlbfBjReVXZh80kiP6uZLPeLbdQ7Kqsei9+t3Dw5u4oppEpu3GcVOQ7a7cNEevFy59YsyYZC7xIbKS8FkGNAPwY+3Dut8g3P6NfBZJUYph95tm7GlfW9sbT06fX/ZmEgr++/B9uxEixB3s3kdQ9ldHnfThwhxMRixejGnDc7olmZ2JqA21SU0cmAaKj3jPZ9nCE1Qav3nX+WuvODVhZwiY3LAtOFjQI6XAI6p9MCtSIKYIv36yM= sinless777@docker-master
 
   jenkins-agent-2:
       image: jenkins/ssh-agent:jdk11
@@ -83,7 +83,7 @@ services:
       expose:
         - 22
       environment:
-        - JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOeItPaeqU5tYtbBtrPRLTX9J2nkFXHVosUSPFLZ0fps disdainful777@gmail.com
+        - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwIFlYVNi5uDglaJH6ofe52+1GCkNr5wml7j2EoYc2ARvaiOa5Ndew4ptFB0gDaBJpyzKD1iShHHTFGdH2tZSJvtmsdYKSahtZOICAgtFQqlAaxuB4o4JR6bFoOSDyzrklITTMrQm/bLSpbyEELyXcYWtvM0wNsFrUZvhPzVeFXmdfPg+8Eu102y439qRikDVlmPeGZJLD8/T+paP/ysFZszSoSvT2rTLbr4/ADMbCnpOHVWOeARmiVUTN8/8CPx06Zw726xUcnnMfIlbfBjReVXZh80kiP6uZLPeLbdQ7Kqsei9+t3Dw5u4oppEpu3GcVOQ7a7cNEevFy59YsyYZC7xIbKS8FkGNAPwY+3Dut8g3P6NfBZJUYph95tm7GlfW9sbT06fX/ZmEgr++/B9uxEixB3s3kdQ9ldHnfThwhxMRixejGnDc7olmZ2JqA21SU0cmAaKj3jPZ9nCE1Qav3nX+WuvODVhZwiY3LAtOFjQI6XAI6p9MCtSIKYIv36yM= sinless777@docker-master
   heimdall:
     image: linuxserver/heimdall
     container_name: heimdall
