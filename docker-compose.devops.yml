@@ -55,7 +55,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f -s -o /dev/null https://jenkins.sinlessgamesllc.com/ || exit 1"]
       interval: 30s
-      interval: 10s
+      timeout: 10s
       retries: 5
 
 
