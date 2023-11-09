@@ -121,11 +121,11 @@ services:
       - TZ=America/Denver
       - MEM_LIMIT=4096 #optional
       - MEM_STARTUP=1024 #optional
-      # - MONGO_USER=unifi
-      # - MONGO_PASS=pass
-      # - MONGO_HOST=unifi-db
-      # - MONGO_PORT=27017
-      # - MONGO_DBNAME=unifi
+      - MONGO_USER=unifi
+      - MONGO_PASS=
+      - MONGO_HOST=unifi-db
+      - MONGO_PORT=27017
+      - MONGO_DBNAME=unifi
     volumes:
       - unifi:/config
     ports:
@@ -146,13 +146,17 @@ services:
       ports:
         - 127.0.0.1:27017:27017
       environment:
+        - ALLOW_EMPTY_PASSWORD=yes
+        - MONGODB_ENABLE_DIRECTORY_PER_DB=yes
         - MONGODB_DATABASE=unifi
-        - MONGODB_ROOT_USERNAME=unifi
-        - MONGODB_ROOT_PASSWORD=pass
+        - MONGODB_USERNAME=unifi
+        # - MONGODB_ROOT_PASSWORD=pass
       volumes:
         - type: bind
-          source: ./data
+          source: /bitnami/mongodb
           target: /home/sinless777/services/unifi/mongo
+      labels:
+        com.centurylinklabs.watchtower.enable: true
 
   ################
   ##  Websites  ##
