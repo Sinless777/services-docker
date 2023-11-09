@@ -144,7 +144,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: mongo:4.4.6-bionic
+      image: mongo:lstest
       container_name: unifi-db
       networks:
         - home-net
@@ -155,11 +155,11 @@ services:
       environment:
         # - ALLOW_EMPTY_PASSWORD=yes
         - MONGODB_ENABLE_DIRECTORY_PER_DB=yes
-        - MONGODB_DATABASE=unifi
-        # - MONGODB_INITDB_ROOT_USERNAME=unifi
-        # - MONGODB_INITDB_ROOT_PASSWORD=pass
-        - MONGODB_USERNAME=unifi
-        - MONGODB_PASSWORD=pass
+        # - MONGODB_INITDB_DATABASE=unifi
+        - MONGODB_INITDB_ROOT_USERNAME=unifi
+        - MONGODB_INITDB_ROOT_PASSWORD=pass
+        # - MONGODB_USERNAME=unifi
+        # - MONGODB_PASSWORD=pass
       volumes:
         - type: bind
           source: ./data
