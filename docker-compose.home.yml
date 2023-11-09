@@ -144,7 +144,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: bitnami/mongodb:5.0-debian-11
+      image: rapidfort/mongodb
       container_name: unifi-db
       networks:
         - home-net
@@ -153,7 +153,6 @@ services:
       ports:
         - 127.0.0.1:27017:27017
       environment:
-        ALLOW_EMPTY_PASSWORD: yes
         MONGO_ENABLE_DIRECTORY_PER_DB: yes
         MONGODB_DATABASE: unifi
         MONGODB_ROOT_USERNAME: unifi
