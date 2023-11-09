@@ -166,7 +166,7 @@ services:
           target: /home/sinless777/services/unifi/mongo
       labels:
         com.centurylinklabs.watchtower.enable: true
-        
+  
   mongo-express:
     image: mongo-express
     environment:
@@ -178,8 +178,8 @@ services:
       - "0.0.0.0:8081:8086"
     depends_on:
       - unifi-db
-   labels:
-        com.centurylinklabs.watchtower.enable: true 
+    labels:
+      com.centurylinklabs.watchtower.enable: true 
     
 
   ################
