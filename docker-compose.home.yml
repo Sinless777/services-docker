@@ -138,12 +138,18 @@ services:
 
   unifi-db:
       image: mongodb/mongodb-community-server:6.0-ubi8
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=unifi
-      - MONGO_INITDB_ROOT_PASSWORD=pass
-    volumes:
-      - source: ./data
-        target: /home/sinless777/services/unifi/mongo
+      container_name: unifi-db
+      networks:
+      - home-net
+      - weave-net
+      - proxy-net
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=unifi
+        - MONGO_INITDB_ROOT_PASSWORD=pass
+      volumes:
+        - type: bind
+          source: ./data
+          target: /home/sinless777/services/unifi/mongo
 
   ################
   ##  Websites  ##
