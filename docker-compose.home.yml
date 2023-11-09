@@ -144,7 +144,7 @@ services:
         - weave-net
         - proxy-net
       ports:
-        - 27017:27017
+        - 127.0.0.1:27017:27017
       environment:
         - MONGODB_INITDB_DATABASE=unifi
         - MONGODB_INITDB_ROOT_USERNAME=unifi
