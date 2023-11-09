@@ -124,7 +124,7 @@ services:
       - MEM_LIMIT=4096 #optional
       - MEM_STARTUP=1024 #optional
       - MONGO_USER=unifi
-      - MONGO_PASS=
+      - MONGO_PASS=pass
       - MONGO_HOST=unifi-db
       - MONGO_PORT=27017
       - MONGO_DBNAME=unifi
@@ -153,11 +153,13 @@ services:
       ports:
         - 127.0.0.1:27017:27017
       environment:
-        - ALLOW_EMPTY_PASSWORD=yes
+        # - ALLOW_EMPTY_PASSWORD=yes
         - MONGODB_ENABLE_DIRECTORY_PER_DB=yes
         - MONGODB_DATABASE=unifi
         - MONGODB_INITDB_ROOT_USERNAME=unifi
-        # - MONGODB_ROOT_PASSWORD=pass
+        - MONGODB_ROOT_PASSWORD=gzadfhgfh
+        - MONGODB_USERNAME=unifi
+        - MONGODB_PASSWORD=pass
       volumes:
         - type: bind
           source: ./data
