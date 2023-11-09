@@ -137,7 +137,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: mongo:latest
+      image: 'bitnami/mongodb:latest'
       container_name: unifi-db
       networks:
         - home-net
