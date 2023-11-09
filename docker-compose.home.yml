@@ -137,7 +137,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: mongo
+      image: docker.io/bitnami/mongodb:7.0
       container_name: unifi-db
       networks:
         - home-net
