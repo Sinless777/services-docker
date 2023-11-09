@@ -124,7 +124,7 @@ services:
       - MEM_LIMIT=4096 #optional
       - MEM_STARTUP=1024 #optional
       - MONGO_USER=unifi
-      - MONGO_PASS=''
+      - MONGO_PASS=pass
       - MONGO_HOST=unifi-db
       - MONGO_PORT=27017
       - MONGO_DBNAME=unifi
@@ -144,7 +144,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: mongo:4.2.24-bionic
+      image: bitnami/mongodb:latest
       container_name: unifi-db
       networks:
         - home-net
@@ -155,9 +155,9 @@ services:
       environment:
         ALLOW_EMPTY_PASSWORD: yes
         MONGO_ENABLE_DIRECTORY_PER_DB: yes
-        MONGO_INITDB_DATABASE: unifi
-        MONGO_INITDB_ROOT_USERNAME: unifi
-        MONGO_INITDB_ROOT_PASSWORD: pass
+        MONGODB_DATABASE: unifi
+        MONGODB_ROOT_USERNAME: unifi
+        MONGODB_ROOT_PASSWORD: pass
         # MONGO_USERNAME: unifi
         # MONGO_PASSWORD: pass
       volumes:
