@@ -156,7 +156,7 @@ services:
         - ALLOW_EMPTY_PASSWORD=yes
         - MONGODB_ENABLE_DIRECTORY_PER_DB=yes
         - MONGODB_DATABASE=unifi
-        - MONGODB_USERNAME=unifi
+        - MONGO_INITDB_ROOT_USERNAME=unifi
         # - MONGODB_ROOT_PASSWORD=pass
       volumes:
         - type: bind
