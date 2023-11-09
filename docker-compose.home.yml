@@ -111,6 +111,8 @@ services:
     image: lscr.io/linuxserver/unifi-network-application:latest # lscr.io/linuxserver/unifi-controller:latest
     restart: always
     container_name: unifi
+    depends_on:
+      - unifi-db
     networks:
       - home-net
       - weave-net
