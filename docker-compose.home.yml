@@ -157,9 +157,9 @@ services:
         - MONGODB_ENABLE_DIRECTORY_PER_DB=yes
         - MONGODB_DATABASE=unifi
         - MONGODB_INITDB_ROOT_USERNAME=unifi
-        - MONGODB_ROOT_PASSWORD=gzadfhgfh
-        - MONGODB_USERNAME=unifi
-        - MONGODB_PASSWORD=pass
+        - MONGODB_INITDB_ROOT_PASSWORD=pass
+        #- MONGODB_USERNAME=unifi
+        #- MONGODB_PASSWORD=pass
       volumes:
         - type: bind
           source: ./data
