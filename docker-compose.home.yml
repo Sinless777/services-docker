@@ -144,7 +144,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: mongo:7.0-rc-jammy
+      image: mongo:4.2.24-bionic
       container_name: unifi-db
       networks:
         - home-net
@@ -166,6 +166,21 @@ services:
           target: /home/sinless777/services/unifi/mongo
       labels:
         com.centurylinklabs.watchtower.enable: true
+        
+  mongo-express:
+    image: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: unifi
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_SERVER: munifi-db
+      ME_CONFIG_MONGODB_PORT: "27017"
+    ports:
+      - "0.0.0.0:8081:8086"
+    depends_on:
+      - unifi-db
+   labels:
+        com.centurylinklabs.watchtower.enable: true 
+    
 
   ################
   ##  Websites  ##
