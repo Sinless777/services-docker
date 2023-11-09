@@ -140,9 +140,11 @@ services:
       image: mongodb/mongodb-community-server:6.0-ubi8
       container_name: unifi-db
       networks:
-      - home-net
-      - weave-net
-      - proxy-net
+        - home-net
+        - weave-net
+        - proxy-net
+      ports:
+        - 27017:27017
       environment:
         - MONGODB_INITDB_ROOT_USERNAME=unifi
         - MONGODB_INITDB_ROOT_PASSWORD=pass
