@@ -156,10 +156,10 @@ services:
         ALLOW_EMPTY_PASSWORD: yes
         MONGO_ENABLE_DIRECTORY_PER_DB: yes
         MONGO_INITDB_DATABASE: unifi
-        MONGO_INITDB_ROOT_USERNAME: unifi111
+        MONGO_INITDB_ROOT_USERNAME: unifi
         MONGO_INITDB_ROOT_PASSWORD: pass
-        MONGO_USERNAME: unifi
-        MONGO_PASSWORD: pass
+        # MONGO_USERNAME: unifi
+        # MONGO_PASSWORD: pass
       volumes:
         - type: bind
           source: ./data
