@@ -99,7 +99,7 @@ services:
   ###   VAULT   ###
 
   vault-server:
-    image: hashicorp/vault:1.9.6
+    image: hashicorp/vault:1.15.2
     container_name: vault-server
     hostname: vault-server
     restart: always
