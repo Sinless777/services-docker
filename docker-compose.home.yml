@@ -144,8 +144,8 @@ services:
       - weave-net
       - proxy-net
       environment:
-        - MONGO_INITDB_ROOT_USERNAME=unifi
-        - MONGO_INITDB_ROOT_PASSWORD=pass
+        - MONGODB_INITDB_ROOT_USERNAME=unifi
+        - MONGODB_INITDB_ROOT_PASSWORD=pass
       volumes:
         - type: bind
           source: ./data
