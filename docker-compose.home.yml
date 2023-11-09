@@ -137,7 +137,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: mongodb/mongodb-community-server:6.0-ubi8
+      image: mongodb/mongodb-community-server:7.0-ubi8
       container_name: unifi-db
       networks:
       - home-net
