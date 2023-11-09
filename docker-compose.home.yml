@@ -144,7 +144,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   unifi-db:
-      image: mongo:5.0.22-nanoserver-1809
+      image: mongo:7.0.2-nanoserver-1809
       container_name: unifi-db
       networks:
         - home-net
