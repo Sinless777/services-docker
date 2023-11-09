@@ -154,10 +154,10 @@ services:
         - 127.0.0.1:27017:27017
       environment:
         # - ALLOW_EMPTY_PASSWORD=yes
-        - MONGODB_ENABLE_DIRECTORY_PER_DB=yes
+        MONGODB_ENABLE_DIRECTORY_PER_DB: yes
         # - MONGODB_INITDB_DATABASE=unifi
-        - MONGODB_INITDB_ROOT_USERNAME=unifi
-        - MONGODB_INITDB_ROOT_PASSWORD=pass
+        MONGODB_INITDB_ROOT_USERNAME: unifi
+        MONGODB_INITDB_ROOT_PASSWORD: pass
         # - MONGODB_USERNAME=unifi
         # - MONGODB_PASSWORD=pass
       volumes:
@@ -176,7 +176,7 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: unifi
       ME_CONFIG_MONGODB_ADMINPASSWORD: pass
-      ME_CONFIG_MONGODB_SERVER: munifi-db
+      ME_CONFIG_MONGODB_SERVER: unifi-db
       ME_CONFIG_MONGODB_PORT: "27017"
     ports:
       - "0.0.0.0:8081:8086"
