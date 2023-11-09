@@ -154,12 +154,12 @@ services:
         - 127.0.0.1:27017:27017
       environment:
         ALLOW_EMPTY_PASSWORD: yes
-        MONGODB_ENABLE_DIRECTORY_PER_DB: yes
-        MONGODB_INITDB_DATABASE: unifi
-        MONGODB_INITDB_ROOT_USERNAME: unifi111
-        MONGODB_INITDB_ROOT_PASSWORD: pass
-        MONGODB_USERNAME: unifi
-        MONGODB_PASSWORD: pass
+        MONGO_ENABLE_DIRECTORY_PER_DB: yes
+        MONGO_INITDB_DATABASE: unifi
+        MONGO_INITDB_ROOT_USERNAME: unifi111
+        MONGO_INITDB_ROOT_PASSWORD: pass
+        MONGO_USERNAME: unifi
+        MONGO_PASSWORD: pass
       volumes:
         - type: bind
           source: ./data
