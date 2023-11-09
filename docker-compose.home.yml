@@ -118,7 +118,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=America/Denver
       - MEM_LIMIT=4096 #optional
       - MEM_STARTUP=1024 #optional
     volumes:
