@@ -134,8 +134,6 @@ services:
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: Shellshocker93!
       MYSQL_DATABASE: vault
