@@ -37,7 +37,7 @@ services:
   mysql:
     image: mysql:8.2
     volumes:
-      - /home/sinless777/services/mysql/vdb:/var/lib/mysql
+      - /home/sinless777/services/mysql/helix:/var/lib/mysql
     restart: always
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
