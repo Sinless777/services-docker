@@ -33,6 +33,18 @@ networks:
     external: true
 
 services:
+
+  mysql:
+    image: mysql:8.2
+    volumes:
+      - /home/sinless777/services/mysql/vdb:/var/lib/mysql
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "3306:3306"
+
+
   ####################
   ##  DevOps Stack  ##
   ####################
