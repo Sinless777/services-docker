@@ -4,7 +4,7 @@ services:
   ###   MONITORING   ###
 
   grafana:
-    image: grafana/grafana:10.2.0
+    image: grafana/grafana:10.2.2
     container_name: grafana
     restart: always
     labels:
