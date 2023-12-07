@@ -75,6 +75,16 @@ services:
       timeout: 10s
       retries: 5
 
+  github-runner:
+    image: sinless777/github-action-runner
+    restart: always
+    networks:
+      - devops-net
+      - weave-net
+    environment:
+      ACCESS_TOKEN: ${ACCESS_TOKEN}
+      ORGANIZATION: ${ORGANIZATION}
+
   heimdall:
     image: linuxserver/heimdall
     container_name: heimdall
