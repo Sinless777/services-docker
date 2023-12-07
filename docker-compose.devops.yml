@@ -86,7 +86,6 @@ services:
       RUNNER_NAME: Docker-DevOps
       RUNNER_TOKEN: ${ACCESS_TOKEN}
       RUNNER_WORKDIR: /tmp/runner/work
-      RUNNER_GROUP: helix
       RUNNER_SCOPE: 'repo'
       LABELS: linux,x64,gpu
     security_opt:
