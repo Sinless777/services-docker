@@ -39,6 +39,13 @@ volumes:
       device: /home/sinless777/services/nginx-proxy
       o: bind
 
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sinless777/services/postgres/maas
+      o: bind
+
   letsencrypt:
     driver: local
     driver_opts:
@@ -47,6 +54,17 @@ volumes:
       o: bind
 
 services:
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: Maasdb
+      POSTGRES_USER: MaaS
+      POSTGRES_PASSWORD: lsalhfsljhadlfghkjlasdfhksdhfkh
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   ##########################################
   ##  Network Load Balancer for Services  ##
   ##########################################
