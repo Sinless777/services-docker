@@ -76,9 +76,9 @@ services:
       # Mysql/Maria connection parameters:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
+      DB_MYSQL_USER: ${MYSQL_USER}
+      DB_MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      DB_MYSQL_NAME: ${MYSQL_DATABASE}
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
@@ -101,10 +101,10 @@ services:
       - proxy-net
       - weave-net
     environment:
-      MYSQL_ROOT_PASSWORD: 'npm'
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     labels:
