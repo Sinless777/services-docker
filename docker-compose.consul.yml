@@ -35,7 +35,7 @@ services:
   ###   CONSUL   ###
 
   consul-server1:
-    image: hashicorp/consul:1.18.2
+    image: hashicorp/consul:1.19.0
     container_name: consul-server1
     hostname: consul-server1
     labels:
@@ -54,7 +54,7 @@ services:
     command: "agent -bootstrap-expect=3"
 
   consul-server2:
-    image: hashicorp/consul:1.18.2
+    image: hashicorp/consul:1.19.0
     container_name: consul-server2
     hostname: consul-server2
     labels:
@@ -69,7 +69,7 @@ services:
     command: "agent -bootstrap-expect=3"
 
   consul-server3:
-    image: hashicorp/consul:1.18.2
+    image: hashicorp/consul:1.19.0
     container_name: consul-server3
     hostname: consul-server3
     restart: always
@@ -84,7 +84,7 @@ services:
     command: "agent -bootstrap-expect=3"
 
   consul-client:
-    image: hashicorp/consul:1.18.2
+    image: hashicorp/consul:1.19.0
     container_name: consul-client
     hostname: consul-client
     restart: always
