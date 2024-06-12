@@ -26,8 +26,11 @@ jobs:
           git config --global user.name 'Sinless777'
           git config --global user.email 'disdainful777@gmail.com'
           git config --global credential.helper store
-          echo "${{ secrets.PAT }}" > ~/.git-credentials
+          echo "https://${{ secrets.GH_PAT }}@github.com" > ~/.git-credentials
           git config --global credential.helper 'store --file ~/.git-credentials'
+
+      - name: Push changes
+        run: |
           git add docker-compose.home.yml
           git commit -m "Update Docker Compose image to ${TAG}"
           git push
