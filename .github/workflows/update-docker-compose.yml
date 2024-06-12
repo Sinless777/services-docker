@@ -19,7 +19,7 @@ jobs:
       - name: Update Docker Compose file
         run: |
           TAG=$(cat .tag)
-          sed -i 's|image: sinless777/sinlessgames-ui:.*|image: sinless777/sinlessgames-ui:${TAG}|g' docker-compose.yml
+          sed -i 's|image: sinless777/sinlessgames-ui:.*|image: sinless777/sinlessgames-ui:${TAG}|g' docker-compose.home.yml
 
       - name: Commit changes
         run: |
