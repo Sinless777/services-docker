@@ -26,6 +26,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repository: Sinless777/services-docker
           event-type: new-docker-image
           client-payload: '{"tag": "${{ env.LATEST_TAG }}"}'
