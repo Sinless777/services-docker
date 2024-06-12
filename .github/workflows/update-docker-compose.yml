@@ -1,0 +1,30 @@
+name: Update Docker Compose
+
+on:
+  repository_dispatch:
+    types: [new-docker-image]
+
+jobs:
+  update-docker-compose:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Get the event payload
+        id: get-payload
+        run: echo "${{ github.event.client_payload.tag }}" > .tag
+
+      - name: Update Docker Compose file
+        run: |
+          TAG=$(cat .tag)
+          sed -i 's|image: sinless777/sinlessgames-ui:.*|image: sinless777/sinlessgames-ui:${TAG}|g' docker-compose.yml
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docker-compose.yml
+          git commit -m "Update Docker Compose image to ${TAG}"
+          git push
