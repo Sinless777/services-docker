@@ -48,5 +48,5 @@ jobs:
             git pull origin
             git add .
             git commit -m "Update sinlessgames image tag to ${{ env.TAG }}"
-            git push origin
+            git push https://x-access-token:${{ secrets.PAT }}@github.com/Sinless777/services-docker.git HEAD:main
           fi
