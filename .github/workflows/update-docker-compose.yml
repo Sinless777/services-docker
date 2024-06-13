@@ -46,7 +46,7 @@ jobs:
             git config --global user.email "disdainful777@gmail.com"
             git config --global user.name "Sinless777"
             git pull origin
-            git add docker-compose.home.yml
+            git add .
             git commit -m "Update sinlessgames image tag to ${{ env.TAG }}"
             git push origin
           fi
