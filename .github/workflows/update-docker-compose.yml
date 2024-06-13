@@ -36,7 +36,7 @@ jobs:
           else
             echo "No update needed. Current tag ${{ env.CURRENT_IMAGE_TAG }} matches the desired tag (${{ env.TAG }})."
           fi
-          cat docker-compose.yml
+          cat docker-compose.home.yml
           
       - name: Commit changes
         env:
