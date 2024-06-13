@@ -40,7 +40,7 @@ jobs:
           
       - name: Commit changes
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ env.CURRENT_IMAGE_TAG }}" != "${{ env.TAG }}" ]; then
             git config --global user.email "disdainful777@gmail.com"
@@ -48,5 +48,5 @@ jobs:
             git pull origin
             git add .
             git commit -m "Update sinlessgames image tag to ${{ env.TAG }}"
-            git push https://x-access-token:${{ secrets.PAT }}@github.com/Sinless777/services-docker.git HEAD:main
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Sinless777/services-docker.git HEAD:main
           fi
