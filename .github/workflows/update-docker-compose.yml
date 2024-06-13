@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [new-docker-image]
 
+permissions:
+  contents: write
+
 jobs:
   update-docker-compose:
     runs-on: ubuntu-latest
