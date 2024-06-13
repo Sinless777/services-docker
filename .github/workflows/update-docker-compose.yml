@@ -40,7 +40,7 @@ jobs:
           
       - name: Commit changes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_PAT }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           if [ "$CURRENT_IMAGE_TAG" != "$TAG" ]; then
             git config --global user.email "disdainful777@gmail.com"
