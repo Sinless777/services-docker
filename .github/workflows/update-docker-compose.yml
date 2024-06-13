@@ -19,7 +19,8 @@ jobs:
 
       - name: Get the event payload
         id: get-payload
-        run: echo "${{ github.event.client_payload.tag }}" > .tag
+        run: |
+          echo "TAG=${{ github.event.client_payload.tag }}" >> $GITHUB_ENV
 
       - name: Read the current sinlessgames image tag from docker-compose.home.yml
         id: read_compose_tag
@@ -29,11 +30,11 @@ jobs:
   
       - name: Compare tags and update docker-compose.home.yaml if necessary
         run: |
-          if [ "$CURRENT_IMAGE_TAG" != "$TAG" ]; then
+          if [ "$CURRENT_IMAGE_TAG" != "${{ env.TAG }}" ]; then
             echo "Updating docker-compose.home.yaml with new tag: $TAG"
-            sed -i "s|services.sinlessgames.image: sinless777/sinlessgames-ui:${CURRENT_IMAGE_TAG}|services.sinlessgames.image: sinless777/sinlessgames-ui:${TAG}|" docker-compose.home.yml
+            sed -i "s|services.sinlessgames.image: sinless777/sinlessgames-ui:${CURRENT_IMAGE_TAG}|services.sinlessgames.image: sinless777/sinlessgames-ui:${{ env.TAG }}|" docker-compose.home.yml
           else
-            echo "No update needed. Current tag ($CURRENT_IMAGE_TAG) matches the desired tag ($TAG)."
+            echo "No update needed. Current tag ($CURRENT_IMAGE_TAG) matches the desired tag (${{ env.TAG }})."
           fi
           
       - name: Commit changes
