@@ -30,7 +30,7 @@ jobs:
   
       - name: Compare tags and update docker-compose.home.yaml if necessary
         run: |
-          if [ "$CURRENT_IMAGE_TAG" != "${{ env.TAG }}" ]; then
+          if [ "${{ CURRENT_IMAGE_TAG }}" != "${{ env.TAG }}" ]; then
             echo "Updating docker-compose.home.yaml with new tag: ${{ env.TAG }}"
             sed -i "s|services.sinlessgames.image: sinless777/sinlessgames-ui:${CURRENT_IMAGE_TAG}|services.sinlessgames.image: sinless777/sinlessgames-ui:${{ env.TAG }}|" docker-compose.home.yml
           else
