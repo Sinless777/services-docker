@@ -30,18 +30,18 @@ jobs:
   
       - name: Compare tags and update docker-compose.home.yaml if necessary
         run: |
-          if [ "${{ CURRENT_IMAGE_TAG }}" != "${{ env.TAG }}" ]; then
+          if [ "${{ env.CURRENT_IMAGE_TAG }}" != "${{ env.TAG }}" ]; then
             echo "Updating docker-compose.home.yaml with new tag: ${{ env.TAG }}"
-            sed -i "s|services.sinlessgames.image: sinless777/sinlessgames-ui:${CURRENT_IMAGE_TAG}|services.sinlessgames.image: sinless777/sinlessgames-ui:${{ env.TAG }}|" docker-compose.home.yml
+            sed -i "s|services.sinlessgames.image: sinless777/sinlessgames-ui:${{ env.CURRENT_IMAGE_TAG }}|services.sinlessgames.image: sinless777/sinlessgames-ui:${{ env.TAG }}|" docker-compose.home.yml
           else
-            echo "No update needed. Current tag ($CURRENT_IMAGE_TAG) matches the desired tag (${{ env.TAG }})."
+            echo "No update needed. Current tag ${{ env.CURRENT_IMAGE_TAG }} matches the desired tag (${{ env.TAG }})."
           fi
           
       - name: Commit changes
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
-          if [ "$CURRENT_IMAGE_TAG" != "$TAG" ]; then
+          if [ "${{ env.CURRENT_IMAGE_TAG }}" != "${{ env.TAG }}" ]; then
             git config --global user.email "disdainful777@gmail.com"
             git config --global user.name "Sinless777"
             git pull origin
