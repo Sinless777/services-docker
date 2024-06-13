@@ -32,7 +32,7 @@ jobs:
         run: |
           if [ "${{ env.CURRENT_IMAGE_TAG }}" != "${{ env.TAG }}" ]; then
             echo "Updating docker-compose.home.yaml with new tag: ${{ env.TAG }}"
-            sed -i "s|services.sinlessgames.image: sinless777/sinlessgames-ui:${{ env.CURRENT_IMAGE_TAG }}|services.sinlessgames.image: sinless777/sinlessgames-ui:${{ env.TAG }}|" docker-compose.home.yml
+            sed -i "s|image: sinless777/sinlessgames-ui:${{ env.CURRENT_IMAGE_TAG }}|image: sinless777/sinlessgames-ui:${{ env.TAG }}|" docker-compose.home.yml
           else
             echo "No update needed. Current tag ${{ env.CURRENT_IMAGE_TAG }} matches the desired tag (${{ env.TAG }})."
           fi
@@ -46,6 +46,6 @@ jobs:
             git config --global user.name "Sinless777"
             git pull origin
             git add docker-compose.home.yml
-            git commit -m "Update sinlessgames image tag to ${TAG}"
+            git commit -m "Update sinlessgames image tag to ${{ env.TAG }}"
             git push origin
           fi
