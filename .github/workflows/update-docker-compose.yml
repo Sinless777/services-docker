@@ -43,8 +43,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "$CURRENT_IMAGE_TAG" != "$TAG" ]; then
-            git config --global user.name "github-actions[bot]"
-            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "Sinless777"
+            git config --global user.email "disdainful777@gmail.com"
             git add docker-compose.home.yml
             git commit -m "Update sinlessgames image tag to ${TAG}"
             git push
