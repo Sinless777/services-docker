@@ -35,7 +35,7 @@ networks:
 services:
 
   mysql:
-    image: mysql:8.4
+    image: mysql:9.0
     volumes:
       - /home/sinless777/services/mysql/helix:/var/lib/mysql
     restart: always
