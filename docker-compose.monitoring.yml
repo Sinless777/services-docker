@@ -65,7 +65,7 @@ services:
       - pg
 
   pg:
-    image: postgres:16.3
+    image: postgres:16.4
     container_name: pg
     hostname: pg
     restart: always
