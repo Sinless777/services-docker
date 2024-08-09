@@ -143,7 +143,7 @@ services:
   ################
 
   sinlessgames:
-    image: sinless777/sinlessgames-ui:1.0.78
+    image: sinless777/sinlessgames-ui:1.0.79
     restart: always
     networks:
       - proxy-net
