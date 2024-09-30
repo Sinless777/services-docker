@@ -74,7 +74,7 @@ services:
       - LOG_CONFS=true #optional
     volumes:
       - /home/sinless777/services/wireguard/config:/config
-      - /home/sinless777/services/lib/modules:/lib/modules #optional
+      - /lib/modules:/lib/modules #optional
     ports:
       - 51820:51820/udp
     sysctls:
