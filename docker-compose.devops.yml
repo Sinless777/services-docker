@@ -4,13 +4,6 @@ version: "3.9"
 ##  Volumes  ##
 ###############
 volumes:
-  jenkins:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/sinless777/services/jenkins
-      o: bind
-
   heimdall:
     driver: local
     driver_opts:
@@ -23,85 +16,19 @@ volumes:
 ################
 networks:
   devops-net:
-    name: devops-net
-    driver: bridge
+    driver: overlay
 
   proxy-net:
     external: true
+    driver: overlay
 
   weave-net:
     external: true
+    driver: overlay
 
 services:
-
-  mysql:
-    image: mysql:9.0
-    volumes:
-      - /home/sinless777/services/mysql/helix:/var/lib/mysql
-    restart: always
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-
-
-  ####################
-  ##  DevOps Stack  ##
-  ####################
-
-  jenkins:
-    image: jenkins/jenkins:lts
-    restart: always
-    container_name: jenkins
-    privileged: true
-    user: root
-    networks:
-      - devops-net
-      - proxy-net
-      - weave-net
-    volumes:
-      - jenkins:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      com.centurylinklabs.watchtower.enable: true
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f -s -o /dev/null https://jenkins.sinlessgamesllc.com/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  github-runner:
-    image: myoung34/github-runner:latest
-    restart: always
-    networks:
-      - devops-net
-      - weave-net
-    environment:
-      REPO_URL: https://github.com/${ORGANIZATION}/${REPO_NAME}
-      RUNNER_NAME: Docker-DevOps
-      RUNNER_TOKEN: ${ACCESS_TOKEN}
-      RUNNER_WORKDIR: /tmp/runner/work
-      RUNNER_SCOPE: 'repo'
-      LABELS: linux,x64,gpu
-    security_opt:
-      # needed on SELinux systems to allow docker container to manage other docker containers
-      - label:disable
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - '/tmp/runner:/tmp/runner'
-      # note: a quirk of docker-in-docker is that this path
-      # needs to be the same path on host and inside the container,
-      # docker mgmt cmds run outside of docker but expect the paths from within
-
   heimdall:
     image: linuxserver/heimdall
-    container_name: heimdall
-    restart: always
     privileged: true
     networks:
       - proxy-net
@@ -112,10 +39,24 @@ services:
       - "3081:80"
     volumes:
       - heimdall:/config
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
     labels:
       com.centurylinklabs.watchtower.enable: true
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3443"]
-      interval: 1s
+      interval: 30s
       timeout: 5s
       retries: 5
