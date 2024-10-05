@@ -5,33 +5,28 @@ version: "3.9"
 ################
 networks:
   home-net:
-    name: home-net
-    driver: bridge
+    driver: overlay
 
   weave-net:
-    name: weave-net
-    driver: bridge
+    driver: overlay
 
   proxy-net:
-    name: proxy-net
-    driver: bridge
+    driver: overlay
 
 ###############
 ##  Volumes  ##
 ###############
-
 volumes:
   portainer_data:
     driver: local
     driver_opts:
-      type: none
-      device: /home/sinless777/services/portainer
       o: bind
+      type: none
+      device: /home/sinless777/services/portainer_data
 
 services:
   portainer:
     image: portainer/portainer-ce:latest
-    container_name: portainer
     security_opt:
       - no-new-privileges:true
     networks:
@@ -45,29 +40,36 @@ services:
       - 8000:8000
       - 9000:9000
       - 9443:9443
-    restart: unless-stopped
-    labels:
-      com.centurylinklabs.watchtower.enable: true
     deploy:
-      labels:
-        - portainer_service
       mode: replicated
       replicas: 1
       placement:
-        constraints: [ node.role == manager, node.labels.cicdBuildsOnly != true ]
+        constraints: [node.role == manager, node.labels.cicdBuildsOnly != true]
       update_config:
         parallelism: 1
       restart_policy:
         condition: any
+      labels:
+        - com.centurylinklabs.watchtower.enable=true
+        - portainer_service
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   agent:
     image: portainer/agent
     environment:
-      # REQUIRED: Should be equal to the service name prefixed by "tasks." when
-      # deployed inside an overlay network
       AGENT_CLUSTER_ADDR: tasks.agent
-      # AGENT_PORT: 9001
-      # LOG_LEVEL: debug
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
@@ -75,21 +77,28 @@ services:
       - weave-net
       - proxy-net
       - home-net
-    labels:
-      com.centurylinklabs.watchtower.enable: true
     deploy:
       mode: global
       placement:
-        constraints: [ node.platform.os == linux ]
+        constraints: [node.platform.os == linux]
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
 
-  ###################
-  ##   WEAVE_NET   ##
-  ###################
-
-  ###   WATCHTOWER   ###
   watchtower:
     image: containrrr/watchtower
-    container_name: watchtower
     restart: always
     networks:
       - weave-net
@@ -101,13 +110,27 @@ services:
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_INCLUDE_RESTARTING=true
       - WATCHTOWER_SCHEDULE=0 0 6 * * *
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     labels:
-      com.centurylinklabs.watchtower.enable: true
+      - com.centurylinklabs.watchtower.enable=true
 
-  ###   WEAVESCOPE   ###
   weavescope:
     image: weaveworks/scope:latest
-    container_name: weavescope
     hostname: weavescope
     pid: "host"
     privileged: true
@@ -116,12 +139,26 @@ services:
       - weave-net
     ports:
       - "4040:4040"
-    labels:
-      works.weave.role: system
-      com.centurylinklabs.watchtower.enable: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
     command:
       - "--probe.docker=true"
       - "--weave=false"
-
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4040"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - works.weave.role=system
+      - com.centurylinklabs.watchtower.enable=true
